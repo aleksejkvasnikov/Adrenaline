@@ -462,6 +462,19 @@ public OnPlayerSpawn(playerid)
     }
 
     PlaySoundForPlayer(playerid, 1186);
+    
+    
+#if defined SHOW_JOINS_PARTS
+    new pname[MAX_PLAYER_NAME], pmsg[256];
+    GetPlayerName(playerid, pname, sizeof(pname));
+
+    new rank = gPlayerData[playerid][pRank];
+    new color = RankColors[rank];
+
+    format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
+    SendClientMessageToAll(COLOR_TEMP, pmsg);
+#endif
+
     return 1;
 }
 
@@ -497,7 +510,6 @@ public OnPlayerEnterRaceCheckpoint(playerid)
 
 
 	    gFinishOrder++;
-	    if (gFinishOrder == 1) GivePlayerMoney(playerid,1);//Credit $1 for every win - AndrsOG
 		switch (gFinishOrder)
 		{
 			case 1,21,31,41,51,61,71,81,91:	format(append, sizeof(append), "st");
@@ -2638,18 +2650,6 @@ public OnPlayerConnect(playerid)
     } else {
         ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Регистрация", "Пароль:", "Ок", "Выход");
     }
-
-#if defined SHOW_JOINS_PARTS
-    new pname[MAX_PLAYER_NAME], pmsg[256];
-    GetPlayerName(playerid, pname, sizeof(pname));
-
-    new rank = gPlayerData[playerid][pRank];
-    new color = RankColors[rank];
-
-    format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
-    SendClientMessageToAll(COLOR_TEMP, pmsg);
-#endif
-
 
     return 1;
 }
