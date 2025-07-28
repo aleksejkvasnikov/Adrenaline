@@ -522,7 +522,12 @@ public OnPlayerEnterRaceCheckpoint(playerid)
 		// rank add XP
 		new xpReward = CalculateXPReward(gTotalRacers, min(gFinishOrder, gTotalRacers));
 		gPlayerData[playerid][pXP] += xpReward;
-        ShowXPText(playerid, xpReward);
+	        ShowXPText(playerid, xpReward);
+	        
+		// rank add money
+		new moneyReward = CalculateMoneyReward(gTotalRacers, min(gFinishOrder, gTotalRacers));
+		gPlayerData[playerid][pMoney] += moneyReward;
+		GivePlayerMoney(playerid,moneyReward);
 
 		new rank = GetPlayerRankByXP(gPlayerData[playerid][pXP]);
 		gPlayerData[playerid][pRank] = rank;
@@ -3095,6 +3100,16 @@ stock GetPlayerRankByXP(xp)
 }
 
 stock CalculateXPReward(totalPlayers, position)
+{
+    if (totalPlayers <= 1) return 0;
+
+    new xpBase = 10;
+    new placePoints = totalPlayers - position + 1;
+
+    return placePoints * xpBase;
+}
+
+stock CalculateMoneyReward(totalPlayers, position)
 {
     if (totalPlayers <= 1) return 0;
 
