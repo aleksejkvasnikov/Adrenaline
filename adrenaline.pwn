@@ -2703,8 +2703,8 @@ public HideXPText(playerid)
     return 1;
 }
 public OnPlayerDisconnect(playerid, reason)
-{    
-	KillTimer(pullMoneyTimer[playerid]);
+{   
+    KillTimer(pullMoneyTimer[playerid]);
     spawned[playerid]=0;
 #if defined SHOW_JOINS_PARTS
     new pname[MAX_PLAYER_NAME], pmsg[256];
