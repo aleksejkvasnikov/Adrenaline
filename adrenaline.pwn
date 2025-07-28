@@ -123,7 +123,8 @@ new Text:Tposition[MAX_PLAYERS];
 new Text:Tappend[MAX_PLAYERS];
 new gMinutes, gSeconds;
 new gindex;
-	
+new casinoInPickup;
+new casinoOutPickup;
 #define MAX_RANKS 11
 
 new const RankNames[MAX_RANKS][] = {
@@ -358,7 +359,8 @@ public OnGameModeInit()
 	SetGameModeText("Adrenaline (Racing)");
 	AddPlayerClass(170,1522.2528,-887.0850,61.1224,248.4600,0,0,0,0,0,0); //
 
-
+    casinoInPickup = CreatePickup(19198, 23, 59.3707,3413.6506,5.5705);
+    casinoOutPickup = CreatePickup(19198, 23, 2233.67798, 1714.32825, 1012.39697);
 	LoadRaceList(); 		//Opens up racenames.txt and reads off the racenames to be used
 	LoadRace(gRaceNames[random(gRaces)]); 		//The first race is picked at random and loaded
 	createTextDraws();		//Creates all the TextDraws for time, position
@@ -366,6 +368,21 @@ public OnGameModeInit()
 	SetTimer("updateTime",1000,1);      //Sets a timer going to update the TextDraw for the displayed racetime
 	for (new i=0;i<MAX_PLAYERS;i++)	gScores[i][0]=i;
 	return 1;
+}
+
+public OnPlayerPickUpPickup(playerid, pickupid)
+{
+    if(pickupid == casinoInPickup)
+    {
+        SetPlayerInterior(playerid,1);
+	    SetPlayerPos(playerid, 2233.8032, 1712.2303, 1011.7632);
+    }
+    else if(pickupid == casinoOutPickup)
+    {
+        SetPlayerInterior(playerid,0);
+	    SetPlayerPos(playerid, 59.3028, 3418.3611, 4.7159);
+    }
+    return 1;
 }
 
 public OnPlayerText(playerid, text[])
@@ -2888,8 +2905,6 @@ stock LoadPlayerData(playerid)
                  27.24 + random(2), 3422.45, 6.2, 0.0, 0, 0, 0, 0, 0, 0);
     TogglePlayerSpectating(playerid, false);
     
-    //SetPlayerInterior(playerid,1);
-	//SetPlayerPos(playerid, 2233.8032, 1712.2303, 1011.7632);
     //SpawnPlayer(playerid);
 
 	InitPlayerInterface(playerid);
