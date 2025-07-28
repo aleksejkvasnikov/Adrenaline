@@ -443,6 +443,17 @@ public OnPlayerSpawn(playerid)
 {
     printf("[DEBUG] OnPlayerSpawn: playerid=%d", playerid);
     spawned[playerid] = 1;
+    
+#if defined SHOW_JOINS_PARTS
+    new pname[MAX_PLAYER_NAME], pmsg[256];
+    GetPlayerName(playerid, pname, sizeof(pname));
+
+    new rank = gPlayerData[playerid][pRank];
+    new color = RankColors[rank];
+
+    format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
+    SendClientMessageToAll(COLOR_TEMP, pmsg);
+#endif
 
     if (!gPlayerData[playerid][pReady])
     {
@@ -462,18 +473,6 @@ public OnPlayerSpawn(playerid)
     }
 
     PlaySoundForPlayer(playerid, 1186);
-    
-    
-#if defined SHOW_JOINS_PARTS
-    new pname[MAX_PLAYER_NAME], pmsg[256];
-    GetPlayerName(playerid, pname, sizeof(pname));
-
-    new rank = gPlayerData[playerid][pRank];
-    new color = RankColors[rank];
-
-    format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
-    SendClientMessageToAll(COLOR_TEMP, pmsg);
-#endif
 
     return 1;
 }
