@@ -113,6 +113,7 @@ new showVoteTimer[MAX_PLAYERS];
 new gNextTrack[256];
 new gVehDestroyTracker[700];
 new gGiveCarTimer[MAX_PLAYERS];
+new pullMoneyTimer[MAX_PLAYERS];
 new gScores[MAX_PLAYERS][2];
 new gScores2[MAX_PLAYERS][2];
 new gGrided[MAX_PLAYERS];
@@ -473,7 +474,7 @@ public OnPlayerSpawn(playerid)
 
         format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
         SendClientMessageToAll(COLOR_TEMP, pmsg);
-        SetTimerEx("PullMoney", TIME_PULL_MONEY, 0, "d", playerid);
+        pullMoneyTimer[playerid] = SetTimerEx("PullMoney", TIME_PULL_MONEY, 1, "d", playerid);
         postLoginInited[playerid] = 1;
     }
 #endif
@@ -2702,7 +2703,8 @@ public HideXPText(playerid)
     return 1;
 }
 public OnPlayerDisconnect(playerid, reason)
-{
+{    
+	KillTimer(pullMoneyTimer[playerid]);
     spawned[playerid]=0;
 #if defined SHOW_JOINS_PARTS
     new pname[MAX_PLAYER_NAME], pmsg[256];
