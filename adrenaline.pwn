@@ -104,6 +104,7 @@ new gRaceType;
 new gRaceMaker[256];
 new gFinished;
 new spawned[MAX_PLAYERS];
+new postLoginInited[MAX_PLAYERS];
 new newcar[MAX_PLAYERS];
 new gWorldID;
 
@@ -445,14 +446,17 @@ public OnPlayerSpawn(playerid)
     spawned[playerid] = 1;
     
 #if defined SHOW_JOINS_PARTS
-    new pname[MAX_PLAYER_NAME], pmsg[256];
-    GetPlayerName(playerid, pname, sizeof(pname));
+    if (postLoginInited[playerid] == 0) {
+        new pname[MAX_PLAYER_NAME], pmsg[256];
+        GetPlayerName(playerid, pname, sizeof(pname));
 
-    new rank = gPlayerData[playerid][pRank];
-    new color = RankColors[rank];
+        new rank = gPlayerData[playerid][pRank];
+        new color = RankColors[rank];
 
-    format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
-    SendClientMessageToAll(COLOR_TEMP, pmsg);
+        format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
+        SendClientMessageToAll(COLOR_TEMP, pmsg);
+        postLoginInited[playerid] = 1;
+    }
 #endif
 
     if (!gPlayerData[playerid][pReady])
@@ -2649,6 +2653,8 @@ public OnPlayerConnect(playerid)
     } else {
         ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Регистрация", "Пароль:", "Ок", "Выход");
     }
+    
+    postLoginInited[playerid] = 0;
 
     return 1;
 }
