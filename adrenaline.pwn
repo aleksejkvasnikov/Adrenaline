@@ -534,7 +534,7 @@ public OnPlayerEnterRaceCheckpoint(playerid)
 		// rank add XP
 		new xpReward = CalculateXPReward(gTotalRacers, min(gFinishOrder, gTotalRacers));
 		gPlayerData[playerid][pXP] += xpReward;
-	        ShowXPText(playerid, xpReward);
+		ShowXPText(playerid, xpReward);
 	        
 		// rank add money
 		new moneyReward = CalculateMoneyReward(gTotalRacers, min(gFinishOrder, gTotalRacers));
@@ -1903,7 +1903,8 @@ CreateSIObjects(playerid)
 	CreatePlayerObject(playerid,19550,272.4998,3695.0000,4.3080,0.0000,0.0000,-180.0000,999.0);
 	CreatePlayerObject(playerid,621,236.0952,3742.8730,4.1185,0.0000,0.0000,125.0000,999.0);
 	CreatePlayerObject(playerid,19536,7.5000,3383.7500,4.3077,0.0000,0.0000,0.0000,999.0);
-
+	CreatePlayerObject(playerid,16146, 62.93165, 3406.10645, 7.50091,   0.00000, 0.00000, -90.35997);
+	CreatePlayerObject(playerid,2232, 52.27252, 3414.25098, 4.97579,   0.00000, 0.00000, -148.80043);
 	// Exit here
 	return 1;
 }
