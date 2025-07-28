@@ -23,6 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <a_samp>
+#define TIME_PULL_MONEY 512
 #define TIME_GIVE_CAR 3000
 #define TIME_MOVE_PLAYER 4000
 #define TIME_PUT_PLAYER 3000
@@ -472,6 +473,7 @@ public OnPlayerSpawn(playerid)
 
         format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
         SendClientMessageToAll(COLOR_TEMP, pmsg);
+        SetTimerEx("PullMoney", TIME_PULL_MONEY, 0, "d", playerid);
         postLoginInited[playerid] = 1;
     }
 #endif
@@ -2183,6 +2185,11 @@ public GridSetupPlayer(playerid)
 	//SetCheckpoint(playerid,gPlayerProgress[playerid],gMaxCheckpoints);
 	//printf("GridSetupDebug- time:%d gridpos:%d playerid:%d vehicle:%d",GetTickCount(),gGridCount,playerid,vehicles[gGridCount]);
 	return 1;
+}
+
+public PullMoney(playerid)
+{
+	gPlayerData[playerid][pMoney] = GetPlayerMoney(playerid);
 }
 
 public GridSetup(playerid)
