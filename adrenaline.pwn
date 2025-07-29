@@ -22,7 +22,8 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <a_samp>
+#include <open.mp>
+#define TIME_PULL_MONEY 16384
 #define TIME_GIVE_CAR 3000
 #define TIME_MOVE_PLAYER 4000
 #define TIME_PUT_PLAYER 3000
@@ -112,6 +113,7 @@ new showVoteTimer[MAX_PLAYERS];
 new gNextTrack[256];
 new gVehDestroyTracker[700];
 new gGiveCarTimer[MAX_PLAYERS];
+new pullMoneyTimer[MAX_PLAYERS];
 new gScores[MAX_PLAYERS][2];
 new gScores2[MAX_PLAYERS][2];
 new gGrided[MAX_PLAYERS];
@@ -408,7 +410,7 @@ public OnPlayerText(playerid, text[])
     return 0; // блокируем стандартный вывод
 }
 
-public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
+public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
 {
 	if(IsKeyJustDown(KEY_FIRE,newkeys,oldkeys) && xRaceBuilding[playerid]>=1)//Has the player just pressed mouse1 when they are in buildmode?
 	{
@@ -472,6 +474,7 @@ public OnPlayerSpawn(playerid)
 
         format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
         SendClientMessageToAll(COLOR_TEMP, pmsg);
+        pullMoneyTimer[playerid] = SetTimerEx("PullMoney", TIME_PULL_MONEY, 1, "d", playerid);
         postLoginInited[playerid] = 1;
     }
 #endif
@@ -2176,6 +2179,12 @@ public GridSetupPlayer(playerid)
 	return 1;
 }
 
+public PullMoney(playerid)
+{
+	gPlayerData[playerid][pMoney] = GetPlayerMoney(playerid);
+	SavePlayerData(playerid);
+}
+
 public GridSetup(playerid)
 {	//Staggered Grid Modified from Y_Less's GetXYInFrontOfPlayer() function
 	//vehicles[playerid]=-1;
@@ -2669,7 +2678,8 @@ public HideXPText(playerid)
     return 1;
 }
 public OnPlayerDisconnect(playerid, reason)
-{
+{   
+    KillTimer(pullMoneyTimer[playerid]);
     spawned[playerid]=0;
 #if defined SHOW_JOINS_PARTS
     new pname[MAX_PLAYER_NAME], pmsg[256];
@@ -2701,10 +2711,11 @@ public OnPlayerDisconnect(playerid, reason)
 	TextDrawHideForPlayer(playerid, TRankHUD[playerid]);
 	TextDrawDestroy(TRankHUD[playerid]);
 	TRankHUD[playerid] = Text:INVALID_TEXT_DRAW;
+	PullMoney(playerid);
 	return 1;
 }
 
-public OnPlayerDeath(playerid, killerid, reason)
+public OnPlayerDeath(playerid, killerid, WEAPON:reason)
 {
 
 	//spawned[playerid]=0;
