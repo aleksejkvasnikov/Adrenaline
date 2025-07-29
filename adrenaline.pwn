@@ -2124,15 +2124,6 @@ SetRaceText(playerid, pos)
 public GridSetupPlayer(playerid)
 {	//Staggered Grid Modified from Y_Less's GetXYInFrontOfPlayer() function
 
-	new State = GetPlayerState(playerid);
-	if (State>1)
-	{
-	    printf("Не удалось поставить на стартовую решетку:%d Причина: был в машине/альтабе/мертв",playerid);
-	    SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Анти-краш система не установила тебя в стартовую решетку. Напиши /rescueme для переподключения в гонку");
-	    //Kick(playerid);
-	    return 1;
-	}
-
 	new Float:distance;
 	
 	if (gGrid2Count>1)
@@ -2195,16 +2186,6 @@ public PullMoney(playerid)
 
 public GridSetup(playerid)
 {	//Staggered Grid Modified from Y_Less's GetXYInFrontOfPlayer() function
-
-	new State = GetPlayerState(playerid);
-	if (State>1)
-	{
-	    printf("Не удалось поставить на стартовую решетку:%d Причина: был в машине/альтабе/мертв",playerid);
-	    SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Анти-краш система не установила тебя в стартовую решетку. Напиши /rescueme для переподключения в гонку");
-	    //Kick(playerid);
-	    return 1;
-	}
-
 	//vehicles[playerid]=-1;
 	new Float:distance;
 
@@ -2646,13 +2627,6 @@ PlaySoundForPlayer(playerid, soundid)
 
 public PutPlayerInVehicleTimed(playerid, veh, slot)
 {
-	new State = GetPlayerState(playerid);
-	if (State!=1)
-	{
-	    printf("Не удалось поставить на старовую решетку:%d Причина: был в машине/был в альтабе/мертв",playerid);
-	    SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Анти-краш система не установила тебя в стартовую решетку. Напиши /rescueme для переподключения в гонку");
-	    return 1;
-	}
 	PutPlayerInVehicle(playerid,veh,slot);
 	SetCameraBehindPlayer(playerid);
 	if(gRaceStarted==0)TogglePlayerControllable(playerid,false);
