@@ -1928,6 +1928,31 @@ CreateSIObjects(playerid)
 	CreatePlayerObject(playerid,19536,7.5000,3383.7500,4.3077,0.0000,0.0000,0.0000,999.0);
 	CreatePlayerObject(playerid,16146, 62.93165, 3406.10645, 7.50091,   0.00000, 0.00000, -90.35997);
 	CreatePlayerObject(playerid,2232, 52.27252, 3414.25098, 4.97579,   0.00000, 0.00000, -148.80043);
+    CreatePlayerObject(playerid,8040, 2.34296, 3374.59326, 5.29753,   0.00000, 0.00000, 90.0);
+    
+    // cost = https://gta.fandom.com/wiki/ cost / 40
+    
+	new vehicle_id = AddStaticVehicleEx(541, 17.6, 3405.3, 5.3, 90.0, -1, -1, 0);
+	SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 0);
+    new vehicle3Dtext = Create3DTextLabel( "Bullet", 0xFF0000AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 0.0, 2.0);
+    vehicle3Dtext = Create3DTextLabel( "$2,100", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 0.0, 1.8);
+
+    vehicle_id = AddStaticVehicleEx(521, 17.6, 3399, 5.3, 90.0, -1, -1, 0);
+	SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 0);
+    vehicle3Dtext = Create3DTextLabel( "FCR-900", 0xFFF033AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 0.0, 2.0);
+    vehicle3Dtext = Create3DTextLabel( "$200", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 0.0, 1.8);
+    
+    vehicle_id = AddStaticVehicleEx(500, 17.6, 3392.4856, 5.3, 90.0, -1, -1, 0);
+	SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 0);
+    vehicle3Dtext = Create3DTextLabel( "Mesa", 0xA3F0F3AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 0.0, 2.0);
+    vehicle3Dtext = Create3DTextLabel( "$2,080", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 0.0, 1.8);
+    
 	// Exit here
 	return 1;
 }
