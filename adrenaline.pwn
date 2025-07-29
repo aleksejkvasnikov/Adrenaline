@@ -22,8 +22,8 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <a_samp>
-#define TIME_PULL_MONEY 512
+#include <open.mp>
+#define TIME_PULL_MONEY 16384
 #define TIME_GIVE_CAR 3000
 #define TIME_MOVE_PLAYER 4000
 #define TIME_PUT_PLAYER 3000
@@ -410,7 +410,7 @@ public OnPlayerText(playerid, text[])
     return 0; // блокируем стандартный вывод
 }
 
-public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
+public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
 {
 	if(IsKeyJustDown(KEY_FIRE,newkeys,oldkeys) && xRaceBuilding[playerid]>=1)//Has the player just pressed mouse1 when they are in buildmode?
 	{
@@ -2182,6 +2182,7 @@ public GridSetupPlayer(playerid)
 public PullMoney(playerid)
 {
 	gPlayerData[playerid][pMoney] = GetPlayerMoney(playerid);
+	SavePlayerData(playerid);
 }
 
 public GridSetup(playerid)
@@ -2710,10 +2711,11 @@ public OnPlayerDisconnect(playerid, reason)
 	TextDrawHideForPlayer(playerid, TRankHUD[playerid]);
 	TextDrawDestroy(TRankHUD[playerid]);
 	TRankHUD[playerid] = Text:INVALID_TEXT_DRAW;
+	PullMoney(playerid);
 	return 1;
 }
 
-public OnPlayerDeath(playerid, killerid, reason)
+public OnPlayerDeath(playerid, killerid, WEAPON:reason)
 {
 
 	//spawned[playerid]=0;
