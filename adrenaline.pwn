@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <a_samp>
-#define TIME_PULL_MONEY 512
+#define TIME_PULL_MONEY 16384
 #define TIME_GIVE_CAR 3000
 #define TIME_MOVE_PLAYER 4000
 #define TIME_PUT_PLAYER 3000
@@ -2182,6 +2182,7 @@ public GridSetupPlayer(playerid)
 public PullMoney(playerid)
 {
 	gPlayerData[playerid][pMoney] = GetPlayerMoney(playerid);
+	SavePlayerData(playerid);
 }
 
 public GridSetup(playerid)
@@ -2710,6 +2711,7 @@ public OnPlayerDisconnect(playerid, reason)
 	TextDrawHideForPlayer(playerid, TRankHUD[playerid]);
 	TextDrawDestroy(TRankHUD[playerid]);
 	TRankHUD[playerid] = Text:INVALID_TEXT_DRAW;
+	PullMoney(playerid);
 	return 1;
 }
 
