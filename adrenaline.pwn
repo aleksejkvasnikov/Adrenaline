@@ -1932,8 +1932,8 @@ CreateSIObjects(playerid)
     
     // cost = https://gta.fandom.com/wiki/ cost / 40
     
-	new vehicle_id = AddStaticVehicleEx(541, 17.6, 3405.3, 5.3, 90.0, -1, -1, 0);
-	SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
+    new vehicle_id = AddStaticVehicleEx(541, 17.6, 3405.3, 5.3, 90.0, -1, -1, 0);
+    SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
     new vehicle3Dtext = Create3DTextLabel( "Bullet", 0xFF0000AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
     vehicle3Dtext = Create3DTextLabel( "$2,100", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
