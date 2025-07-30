@@ -1930,31 +1930,42 @@ CreateSIObjects(playerid)
 	CreatePlayerObject(playerid,2232, 52.27252, 3414.25098, 4.97579,   0.00000, 0.00000, -148.80043);
     CreatePlayerObject(playerid,8040, 2.34296, 3374.59326, 5.29753,   0.00000, 0.00000, 90.0);
     
-    // cost = https://gta.fandom.com/wiki/ cost / 40
+    CreateCarShop();
     
-    new vehicle_id = AddStaticVehicleEx(541, 17.6, 3405.3, 5.3, 90.0, -1, -1, 0);
+	// Exit here
+	return 1;
+}
+
+CreateCarShop() {    
+    // cost = https://www.gtabase.com/gta-san-andreas/vehicles/ cost / 40
+    
+    /*new vehicle_id = AddStaticVehicleEx(541, 17.6, 3405.3, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
     new vehicle3Dtext = Create3DTextLabel( "Bullet", 0xFF0000AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
-    vehicle3Dtext = Create3DTextLabel( "$2,100", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    vehicle3Dtext = Create3DTextLabel( "$2,125", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);*/
+    
+    new vehicle_id = AddStaticVehicleEx(551, 16.4, 3405.3, 5.3, 90.0, -1, -1, 0);
+    SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
+    new vehicle3Dtext = Create3DTextLabel( "Merit", 0xFF0000AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
+    vehicle3Dtext = Create3DTextLabel( "$875", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
 
     vehicle_id = AddStaticVehicleEx(521, 17.6, 3399, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
     vehicle3Dtext = Create3DTextLabel( "FCR-900", 0xFFF033AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
-    vehicle3Dtext = Create3DTextLabel( "$200", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    vehicle3Dtext = Create3DTextLabel( "$250", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
     vehicle_id = AddStaticVehicleEx(500, 17.6, 3392.4856, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
     vehicle3Dtext = Create3DTextLabel( "Mesa", 0xA3F0F3AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
-    vehicle3Dtext = Create3DTextLabel( "$2,080", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    vehicle3Dtext = Create3DTextLabel( "$625", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
-    
-	// Exit here
-	return 1;
 }
 
 AddPlayersToRace(num)
