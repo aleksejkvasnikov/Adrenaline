@@ -28,6 +28,7 @@
 #define TIME_MOVE_PLAYER 4000
 #define TIME_PUT_PLAYER 3000
 #define TIME_SHOW_VOTE 4000
+#define TIME_TO_FINISH_MENU 512
 
 #define SPARE_CARS 2 //number of spare cars per race
 #define RACES_TILL_MODECHANGE 0 //for use if you just want a few races to play then change to another mode
@@ -86,6 +87,7 @@ new gWorldTime;
 new gWeather;
 new gCountdowntimer;
 new gEndRacetimer;
+new finishInCarTimer[MAX_PLAYERS];
 new gTrackTime;
 new Float:gGrid[8];
 new Float:gGrid2[8];
@@ -93,12 +95,13 @@ new vehicles[MAX_PLAYERS];
 new gRaces;
 new Menu:voteMenu;
 new Menu:carShopMenu;
-new Menu:buyCarMenu;
-new Menu:rentCarMenu;
+new Menu:buyCarMenu[MAX_PLAYERS];
+new Menu:rentCarMenu[MAX_PLAYERS];
 new Menu:carColorMenu[MAX_PLAYERS];
 new Menu:rentCarDaysMenu[MAX_PLAYERS];
 new Menu:buildMenu[MAX_PLAYERS];
 new inCarsMenu[MAX_PLAYERS];
+new inCarsMenuFinished[MAX_PLAYERS];
 new carTypeSelection[MAX_PLAYERS];
 new rentDaysSelection[MAX_PLAYERS];
 new carCost[1024];
@@ -232,9 +235,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 	    SetTimerEx("showVotes",800,0,"d",playerid);
 		return 0;
 	}*/
-	printf("menu");
 	new Menu:Current = GetPlayerMenu(playerid);
-	printf("menudd %d %d", Current == voteMenu, Current == carShopMenu);
 	if (Current == voteMenu)
 	{
 		new vmsg[256],pname[MAX_PLAYER_NAME];
@@ -376,51 +377,104 @@ public OnPlayerSelectedMenuRow(playerid, row)
 	} */else if (Current == carShopMenu) {
 	    printf("row %d", row);
         switch (row) {
-            case 0: ShowMenuForPlayer(buyCarMenu,playerid);
-            case 1: ShowMenuForPlayer(rentCarMenu,playerid);
+            case 0: {
+	            DestroyMenu(buyCarMenu[playerid]);
+	            buyCarMenu[playerid] = CreateMenu("Buy Car",2, 50.0, 200.0, 120.0, 250.0);
+                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("Merit", 0, playerid));
+                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("FCR-900", 1, playerid));
+                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("Mesa", 2, playerid));
+                AddMenuItem(buyCarMenu[playerid],1,"$875");
+                AddMenuItem(buyCarMenu[playerid],1,"$250");
+                AddMenuItem(buyCarMenu[playerid],1,"$625");
+                ShowMenuForPlayer(buyCarMenu[playerid],playerid);
+            }
+            case 1: {
+	            DestroyMenu(rentCarMenu[playerid]);
+	            rentCarMenu[playerid] = CreateMenu("Rent Car",2, 50.0, 200.0, 120.0, 250.0);
+                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("Merit", 0, playerid));
+                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("FCR-900", 1, playerid));
+                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("Mesa", 2, playerid));
+                ShowMenuForPlayer(rentCarMenu[playerid],playerid);
+            }
         }
 		return 1;
-    } else if (Current == buyCarMenu) {
-        if (gPlayerData[playerid][pMoney] < carCost[shopCarIds[row]]) {        
+    } else if (Current == buyCarMenu[playerid]) {
+        if (gPlayerData[playerid][pMoney] < carCost[shopCarIds[row]]) {
     		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] недостаточно денег");
+		    TogglePlayerControllable(playerid,1);
+		    inCarsMenu[playerid] = 0;
+		    inCarsMenuFinished[playerid] = 1;
+        } else if (gPlayerData[playerid][pBoughtCarsHealth][row] > 0) {
+    		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] уже куплено");
+		    TogglePlayerControllable(playerid,1);
+		    inCarsMenu[playerid] = 0;
+		    inCarsMenuFinished[playerid] = 1;
         } else {
-            carTypeSelection[playerid] = shopCarIds[row];
+            carTypeSelection[playerid] = row;
             rentDaysSelection[playerid] = 0;
             
-	        new cmsg[256];
-	        format(cmsg,256,"Color of %s", carName[carTypeSelection[playerid]]);
-            
-	        DestroyMenu(carColorMenu[playerid]);
-            carColorMenu[playerid] = CreateMenu(cmsg,2, 50.0, 200.0, 120.0, 250.0);
-            AddMenuItem(carColorMenu[playerid],0,"White");
-            AddMenuItem(carColorMenu[playerid],0,"Black");
-            AddMenuItem(carColorMenu[playerid],0,"Red");
-            AddMenuItem(carColorMenu[playerid],0,"Blue");
-            ShowMenuForPlayer(carColorMenu[playerid],playerid);
+            ColorMenu(playerid);
         }
 		return 1;
-    } else if (Current == rentCarMenu) {
-        carTypeSelection[playerid] = shopCarIds[row];
+    } else if (Current == rentCarMenu[playerid]) {
+        carTypeSelection[playerid] = row;
         
 	    new cmsg[256];
-	    format(cmsg,256,"Rent days of %s", carName[carTypeSelection[playerid]]);
+	    format(cmsg,256,"Rent %s", carName[shopCarIds[carTypeSelection[playerid]]]);
 	    DestroyMenu(rentCarDaysMenu[playerid]);
         rentCarDaysMenu[playerid] = CreateMenu(cmsg,2, 50.0, 200.0, 120.0, 250.0);
+        SetMenuColumnHeader(rentCarDaysMenu[playerid],0,"Days");
         AddMenuItem(rentCarDaysMenu[playerid],0,"1");
         AddMenuItem(rentCarDaysMenu[playerid],0,"2");
         AddMenuItem(rentCarDaysMenu[playerid],0,"5");
         AddMenuItem(rentCarDaysMenu[playerid],0,"10");
+        SetMenuColumnHeader(rentCarDaysMenu[playerid],1,"Cost");
+        new cost = carCost[shopCarIds[carTypeSelection[playerid]]];
+        format(cmsg, 256, "%d", cost / 10);
+        AddMenuItem(rentCarDaysMenu[playerid],1, cmsg);
+        format(cmsg, 256, "%d", cost * 8 / 70);
+        AddMenuItem(rentCarDaysMenu[playerid],1, cmsg);
+        format(cmsg, 256, "%d", cost * 2 / 5);
+        AddMenuItem(rentCarDaysMenu[playerid],1, cmsg);
+        format(cmsg, 256, "%d", cost * 7 / 10);
+        AddMenuItem(rentCarDaysMenu[playerid],1, cmsg);
         ShowMenuForPlayer(rentCarDaysMenu[playerid],playerid);
 		return 1;
     } else if (Current == carColorMenu[playerid]) {
-        if (rentDaysSelection[playerid] == 0)
+	    new cost = carCost[shopCarIds[carTypeSelection[playerid]]];
+        if (rentDaysSelection[playerid] == 0) {
     	    gPlayerData[playerid][pBoughtCarsHealth][carTypeSelection[playerid]] = 100;
-    	else
-    	    gPlayerData[playerid][pRentedCarDays][carTypeSelection[playerid]] = rentDaysSelection[playerid];
+    	} else {
+    	    new days;
+    	    new rowDays = rentDaysSelection[playerid] - 1;
+            switch (rowDays) {
+                case 0: {
+                    cost /= 10;
+                    days = 1;
+                }
+                case 1: {
+                    cost = cost * 8 / 70;
+                    days = 2;
+                }
+                case 2: {
+                    cost = cost * 2 / 5;
+                    days = 5;
+                }
+                case 3: {
+                    cost = cost * 7 / 10;
+                    days = 10;
+                }
+            }
+    	    gPlayerData[playerid][pRentedCarDays][carTypeSelection[playerid]] += days;
+    	}
+		gPlayerData[playerid][pMoney] -= cost;
+		GivePlayerMoney(playerid,-cost);
 		TogglePlayerControllable(playerid,1);
 		inCarsMenu[playerid] = 0;
+		inCarsMenuFinished[playerid] = 1;
 		return 1;
     } else if (Current == rentCarDaysMenu[playerid]) {
+        rentDaysSelection[playerid] = row + 1;
         new cost = carCost[shopCarIds[carTypeSelection[playerid]]];
         switch (row) {
             case 0: cost /= 10;
@@ -430,23 +484,41 @@ public OnPlayerSelectedMenuRow(playerid, row)
         }
         if (gPlayerData[playerid][pMoney] < cost) {        
     		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] недостаточно денег");
+		    TogglePlayerControllable(playerid,1);
+		    inCarsMenu[playerid] = 0;
+		    inCarsMenuFinished[playerid] = 1;
         } else {
-	        new cmsg[256];
-	        format(cmsg,256,"Color of %s", carName[carTypeSelection[playerid]]);
-            
-	        DestroyMenu(carColorMenu[playerid]);
-            carColorMenu[playerid] = CreateMenu(cmsg,2, 50.0, 200.0, 120.0, 250.0);
-            AddMenuItem(carColorMenu[playerid],0,"White");
-            AddMenuItem(carColorMenu[playerid],0,"Black");
-            AddMenuItem(carColorMenu[playerid],0,"Red");
-            AddMenuItem(carColorMenu[playerid],0,"Blue");
-            ShowMenuForPlayer(carColorMenu[playerid],playerid);
+            ColorMenu(playerid);
         }
 		return 1;
     }
 	return 1;
 }
 
+ColorMenu(playerid) {
+    new cmsg[256];
+    format(cmsg,256,"Color of %s", carName[carTypeSelection[playerid]]);
+    
+    DestroyMenu(carColorMenu[playerid]);
+    carColorMenu[playerid] = CreateMenu(cmsg,2, 50.0, 200.0, 120.0, 250.0);
+    AddMenuItem(carColorMenu[playerid],0,"White");
+    AddMenuItem(carColorMenu[playerid],0,"Black");
+    AddMenuItem(carColorMenu[playerid],0,"Red");
+    AddMenuItem(carColorMenu[playerid],0,"Blue");
+    ShowMenuForPlayer(carColorMenu[playerid],playerid);
+}
+
+FormatCarPurchase(name[], row, playerid) {
+    new cmsg[256];
+    format(cmsg,256,"%s%s", name, gPlayerData[playerid][pBoughtCarsHealth][row] > 0 ? "(*)" : "");
+    return cmsg;
+}
+
+FormatCarRent(name[], row, playerid) {
+    new cmsg[256];
+    format(cmsg,256,"%s(%d)", name, gPlayerData[playerid][pRentedCarDays][row]);
+    return cmsg;
+}
 
 public OnGameModeInit()
 {
@@ -479,12 +551,21 @@ public OnPlayerPickUpPickup(playerid, pickupid)
     else if(pickupid == carShopPickup)
     {
         if (inCarsMenu[playerid] == 0) {
-		    TogglePlayerControllable(playerid,0);
-            ShowMenuForPlayer(carShopMenu,playerid)
-		    inCarsMenu[playerid] = 1;
+            if (inCarsMenuFinished[playerid] == 0) {
+		        TogglePlayerControllable(playerid,0);
+                ShowMenuForPlayer(carShopMenu,playerid)
+		        inCarsMenu[playerid] = 1;
+		    } else {
+    		    KillTimer(finishInCarTimer[playerid]);
+		        finishInCarTimer[playerid] = SetTimerEx("FinishInCarsMenu", TIME_TO_FINISH_MENU, 0, "d", playerid);
+		    }
 		}
     }
     return 1;
+}
+
+public FinishInCarsMenu(playerid) {
+    inCarsMenuFinished[playerid] = 0;
 }
 
 public OnPlayerText(playerid, text[])
@@ -2072,22 +2153,11 @@ CreateCarShop() {
     vehicle3Dtext = Create3DTextLabel( "$625", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
-    carShopPickup = CreatePickup(1274, 1, 2.34296, 3412, 5.29753);
+    carShopPickup = CreatePickup(1274, 23, 2.34296, 3412, 5.29753);
     
 	carShopMenu = CreateMenu("Cars",1, 50.0, 200.0, 120.0, 250.0);
     AddMenuItem(carShopMenu,0,"Buy");
     AddMenuItem(carShopMenu,0,"Rent");
-	buyCarMenu = CreateMenu("Buy Car",2, 50.0, 200.0, 120.0, 250.0);
-    AddMenuItem(buyCarMenu,0,"Merit");
-    AddMenuItem(buyCarMenu,0,"FCR-900");
-    AddMenuItem(buyCarMenu,0,"Mesa");
-    AddMenuItem(buyCarMenu,1,"$875");
-    AddMenuItem(buyCarMenu,1,"$250");
-    AddMenuItem(buyCarMenu,1,"$625");
-	rentCarMenu = CreateMenu("Rent Car",2, 50.0, 200.0, 120.0, 250.0);
-    AddMenuItem(rentCarMenu,0,"Merit");
-    AddMenuItem(rentCarMenu,0,"FCR-900");
-    AddMenuItem(rentCarMenu,0,"Mesa");
 }
 
 AddPlayersToRace(num)
@@ -3047,6 +3117,12 @@ stock LoadPlayerData(playerid)
 		if (!strcmp(key, "wins", true))     gPlayerData[playerid][pWins]  = strval(val);
         else if (!strcmp(key, "money", true))    gPlayerData[playerid][pMoney] = strval(val);
         else if (!strcmp(key, "skin", true))     gPlayerData[playerid][pSkin]  = strval(val);
+        else if (!strcmp(key, "boughtCars0", true)) gPlayerData[playerid][pBoughtCarsHealth][0] = strval(val);
+        else if (!strcmp(key, "boughtCars1", true)) gPlayerData[playerid][pBoughtCarsHealth][1] = strval(val);
+        else if (!strcmp(key, "boughtCars2", true)) gPlayerData[playerid][pBoughtCarsHealth][2] = strval(val);
+        else if (!strcmp(key, "rentedCars0", true)) gPlayerData[playerid][pRentedCarDays][0] = strval(val);
+        else if (!strcmp(key, "rentedCars1", true)) gPlayerData[playerid][pRentedCarDays][1] = strval(val);
+        else if (!strcmp(key, "rentedCars2", true)) gPlayerData[playerid][pRentedCarDays][2] = strval(val);
 		else if (!strcmp(key, "xp", true)) {
 		    gPlayerData[playerid][pXP] = strval(val);
 		    gPlayerData[playerid][pRank] = GetPlayerRankByXP(gPlayerData[playerid][pXP]);
