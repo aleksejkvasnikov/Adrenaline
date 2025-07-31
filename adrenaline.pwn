@@ -579,6 +579,8 @@ public OnGameModeInit()
 	SetTimer("updateTime",1000,1);      //Sets a timer going to update the TextDraw for the displayed racetime
 	for (new i=0;i<MAX_PLAYERS;i++)	gScores[i][0]=i;
     
+	DisableInteriorEnterExits();
+
     CreateCarShop();
 	return 1;
 }
@@ -968,7 +970,7 @@ shop(playerid) {
     inCarsMenu[playerid] = 1;
     if (gPlayerData[playerid][pCurrentCar] < 0)
         gPlayerData[playerid][pCurrentCar] = -gPlayerData[playerid][pCurrentCar] - 1;
-    ShowMenuForPlayer(carShopMenu,playerid)
+    ShowMenuForPlayer(carShopMenu,playerid);
 }
 
 dcmd_garage(playerid, params[]) {
@@ -2766,8 +2768,8 @@ LoadRace(racename[])
 	gGrid2Count=0;
 	KillTimer(gCountdowntimer);
 	gCountdowntimer = SetTimer("Countdowntimer",1000,1);
-	SetWorldTime(gWorldTime);
-	SetWeather(gWeather);
+	//SetWorldTime(gWorldTime);
+	//SetWeather(gWeather);
 	gRaceStart=0;
 	gRaceStarted=0;
 	gFinished=0;
