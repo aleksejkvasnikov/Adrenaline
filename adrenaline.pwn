@@ -958,13 +958,13 @@ garage(playerid) {
     if (gPlayerData[playerid][pCurrentCar] >= 0)
         gPlayerData[playerid][pCurrentCar] = -gPlayerData[playerid][pCurrentCar] - 1;
     inCarsMenu[playerid] = 1;
-    ShowMenuForPlayer(garageMenu,playerid)
+    ShowMenuForPlayer(garageMenu,playerid);
 }
 
 shop(playerid) {
     TogglePlayerControllable(playerid,0);
     inCarsMenu[playerid] = 1;
-    ShowMenuForPlayer(carShopMenu,playerid)
+    ShowMenuForPlayer(carShopMenu,playerid);
 }
 
 dcmd_garage(playerid, params[]) {
