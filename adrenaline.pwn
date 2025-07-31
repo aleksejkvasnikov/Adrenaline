@@ -985,16 +985,27 @@ dcmd_shop(playerid, params[]) {
 
 dcmd_ready(playerid, params[])
 {
-    #pragma unused params
+   #pragma unused params
 
-    new c = gPlayerData[playerid][pCurrentCar];
-
-	if(gPlayerData[playerid][pRentedCarRaces][c-3]==0 &&
-	 gPlayerData[playerid][pBoughtCarsHealth][c]==0 &&
-	 !gPlayerData[playerid][pReady]){		
-          SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Choose a car that still has rental races or choose your own car.");
-			return 1;
+   new c = gPlayerData[playerid][pCurrentCar];
+	if(c>=3)
+	{
+		if(gPlayerData[playerid][pRentedCarRaces][c-3]==0 && !gPlayerData[playerid][pReady])
+		{
+			SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Выберите другой арендный автомобиль.");
+			return 1;	
+		}
+		
 	}
+	else if(c>=0 && c<3)
+	{
+		if(gPlayerData[playerid][pBoughtCarsHealth][c]==0 && !gPlayerData[playerid][pReady])
+		{
+			SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Выберите другой автомобиль.");
+			return 1;	
+		}
+	}
+	
 	
     gPlayerData[playerid][pReady] = !gPlayerData[playerid][pReady];
 
@@ -1648,17 +1659,17 @@ public RemovePlayersFromVehicles()
 			if(gPlayerData[i][pCurrentCar]>=3)
 				if(gPlayerData[i][pRentedCarRaces][gPlayerData[i][pCurrentCar]-3]==0)
 				{
-				SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
-				SetPlayerFacingAngle(i, 270.0);
-				SetCameraBehindPlayer(i);
-				
-				gPlayerData[i][pReady] = !gPlayerData[i][pReady];
-				new status[16];
-				SendClientMessage(i, COLOR_TEMP, "[STATUS] You are now marked as NOT READY.");
-				format(status, sizeof(status), "~r~NOT READY");
-				GameTextForPlayer(i, status, 2000, 3);
-				UpdatePlayerRankHUD(i);			
-			}
+					SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
+					SetPlayerFacingAngle(i, 270.0);
+					SetCameraBehindPlayer(i);
+					
+					gPlayerData[i][pReady] = !gPlayerData[i][pReady];
+					new status[16];
+					SendClientMessage(i, COLOR_TEMP, "[STATUS] You are now marked as NOT READY.");
+					format(status, sizeof(status), "~r~NOT READY");
+					GameTextForPlayer(i, status, 2000, 3);
+					UpdatePlayerRankHUD(i);			
+				}
 	  
 		}
 	}
