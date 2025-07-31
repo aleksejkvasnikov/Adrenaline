@@ -238,9 +238,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 	    SetTimerEx("showVotes",800,0,"d",playerid);
 		return 0;
 	}*/
-    printf("something selected");
 	new Menu:Current = GetPlayerMenu(playerid);
-    printf("current is garage %d", Current == garageMenu);
 	if (Current == voteMenu)
 	{
 		new vmsg[256],pname[MAX_PLAYER_NAME];
@@ -274,9 +272,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
         }
 		return 1;
     } else if (Current == garageMenu) {
-        printf("In garage menu");
         new c = gPlayerData[playerid][pCurrentCar];
-        printf("In garage menu %d %d", c, row);
         switch (row) {
             case 0: {
 	            DestroyMenu(buyCarMenu[playerid]);
@@ -295,7 +291,6 @@ public OnPlayerSelectedMenuRow(playerid, row)
                 ShowMenuForPlayer(rentCarMenu[playerid],playerid);
             }
         }
-        printf("not In garage menu");
 		return 1;
     } else if (Current == buyCarMenu[playerid]) {
         if (gPlayerData[playerid][pCurrentCar] < 0) {
