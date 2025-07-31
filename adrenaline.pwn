@@ -964,6 +964,8 @@ garage(playerid) {
 shop(playerid) {
     TogglePlayerControllable(playerid,0);
     inCarsMenu[playerid] = 1;
+    if (gPlayerData[playerid][pCurrentCar] < 0)
+        gPlayerData[playerid][pCurrentCar] = -gPlayerData[playerid][pCurrentCar] - 1;
     ShowMenuForPlayer(carShopMenu,playerid)
 }
 
