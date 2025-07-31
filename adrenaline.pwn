@@ -578,6 +578,8 @@ public OnGameModeInit()
 	createBuildMenus();     //Creates the menus for building races
 	SetTimer("updateTime",1000,1);      //Sets a timer going to update the TextDraw for the displayed racetime
 	for (new i=0;i<MAX_PLAYERS;i++)	gScores[i][0]=i;
+    
+    CreateCarShop();
 	return 1;
 }
 
@@ -964,7 +966,9 @@ garage(playerid) {
 shop(playerid) {
     TogglePlayerControllable(playerid,0);
     inCarsMenu[playerid] = 1;
-    ShowMenuForPlayer(carShopMenu,playerid);
+    if (gPlayerData[playerid][pCurrentCar] < 0)
+        gPlayerData[playerid][pCurrentCar] = -gPlayerData[playerid][pCurrentCar] - 1;
+    ShowMenuForPlayer(carShopMenu,playerid)
 }
 
 dcmd_garage(playerid, params[]) {
@@ -2189,8 +2193,6 @@ CreateSIObjects(playerid)
 	CreatePlayerObject(playerid,16146, 62.93165, 3406.10645, 7.50091,   0.00000, 0.00000, -90.35997);
 	CreatePlayerObject(playerid,2232, 52.27252, 3414.25098, 4.97579,   0.00000, 0.00000, -148.80043);
     CreatePlayerObject(playerid,8040, 2.34296, 3374.59326, 5.29753,   0.00000, 0.00000, 90.0);
-    
-    CreateCarShop();
     
 	// Exit here
 	return 1;
