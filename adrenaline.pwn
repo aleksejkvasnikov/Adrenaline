@@ -987,9 +987,19 @@ dcmd_ready(playerid, params[])
 {
     #pragma unused params
 
+    new c = gPlayerData[playerid][pCurrentCar];
+
+	if(gPlayerData[playerid][pRentedCarRaces][c-3]==0 &&
+	 gPlayerData[playerid][pBoughtCarsHealth][c]==0 &&
+	 !gPlayerData[playerid][pReady]){		
+          SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Choose a car that still has rental races or choose your own car.");
+			return 1;
+	}
+	
     gPlayerData[playerid][pReady] = !gPlayerData[playerid][pReady];
 
     new status[16];
+
     if (gPlayerData[playerid][pReady])
     {
         SendClientMessage(playerid, COLOR_TEMP, "[STATUS] You are now marked as READY for the next race.");
@@ -1376,7 +1386,11 @@ public giveCar(playerid, modelid, world)
         RemovePlayerFromVehicle(playerid);
 	    gGiveCarTimer[playerid] = SetTimerEx("giveCar",TIME_GIVE_CAR,0,"dd",playerid, modelid);
 	} else {
-
+		// rent system: has to subtract one
+		if(gPlayerData[playerid][pCurrentCar]>=3)
+			gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]-3] -= 1;
+		// some payments from car owner?
+		
 		//vehicles[playerid] =
 		//new temp = CreateVehicle(modelid,pos[0],pos[1],pos[2],pos[3],-1,-1,10);
 		new temp = CreateVehicle(CurrentCar(playerid),pos[0],pos[1],pos[2],pos[3],-1,-1,10);
@@ -1630,6 +1644,22 @@ public RemovePlayersFromVehicles()
 				SetPlayerFacingAngle(i, 270.0);
 				SetCameraBehindPlayer(i);
 			}
+			// если машины нет, то игрок обратно на остров + становится не готов
+			if(gPlayerData[i][pCurrentCar]>=3)
+				if(gPlayerData[i][pRentedCarRaces][gPlayerData[i][pCurrentCar]-3]==0)
+				{
+				SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
+				SetPlayerFacingAngle(i, 270.0);
+				SetCameraBehindPlayer(i);
+				
+				gPlayerData[i][pReady] = !gPlayerData[i][pReady];
+				new status[16];
+				SendClientMessage(i, COLOR_TEMP, "[STATUS] You are now marked as NOT READY.");
+				format(status, sizeof(status), "~r~NOT READY");
+				GameTextForPlayer(i, status, 2000, 3);
+				UpdatePlayerRankHUD(i);			
+			}
+	  
 		}
 	}
 }
@@ -2505,7 +2535,9 @@ public GridSetup(playerid)
 {	//Staggered Grid Modified from Y_Less's GetXYInFrontOfPlayer() function
 	//vehicles[playerid]=-1;
 	new Float:distance;
-
+	// rent system: has to subtract one
+	if(gPlayerData[playerid][pCurrentCar]>=3)
+		gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]-3] -= 1;
 	if (gGridCount>1)
 	{
 		distance=10.0;
