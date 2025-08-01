@@ -8,7 +8,7 @@
 #include <open.mp>
 #pragma tabsize 0
 
-#include "gl_common.inc"
+#include "../include/gl_common.inc"
 
 //--------------------------------------------------
 
