@@ -10,7 +10,7 @@
 //        Simon: Used ConvertToSafeInput() as base for CheckSafeInput()      //
 //                            Dabombber: TimeConvert()                       //
 //             Yagu: Referenced his race filterscript early on               //
-//             http://forum.sa-mp.com/index.php?topic=20637.0                //
+//             http://forum.sa-mp.com/index.php?topic=2067.0                //
 //                                                                           //
 //                                                                           //
 //                                 Testing:                                  //
@@ -29,6 +29,7 @@
 #define TIME_PUT_PLAYER 3000
 #define TIME_SHOW_VOTE 4000
 #define TIME_TO_FINISH_MENU 512
+#define CARS_NUMBER
 
 #define SPARE_CARS 2 //number of spare cars per race
 #define RACES_TILL_MODECHANGE 0 //for use if you just want a few races to play then change to another mode
@@ -54,8 +55,8 @@ enum E_PLAYER_DATA {
     pMoney,
     pSkin,
     pReady,
-    pBoughtCarsHealth[3],
-    pRentedCarRaces[3],
+    pBoughtCarsHealth[CARS_NUMBER],
+    pRentedCarRaces[CARS_NUMBER],
     pCurrentCar
 };
 new gPlayerData[MAX_PLAYERS][E_PLAYER_DATA];
@@ -163,7 +164,7 @@ new const RankNames[MAX_RANKS][] = {
     "The Boss"
 };
 
-new const shopCarIds[3] = {
+new const shopCarIds[CARS_NUMBER] = {
     551,
     521,
     500
@@ -326,7 +327,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
             if (gPlayerData[playerid][pRentedCarRaces][row] == 0) {
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] машина не арендована");
             } else {
-                gPlayerData[playerid][pCurrentCar] = row + 3;
+                gPlayerData[playerid][pCurrentCar] = row + CARS_NUMBER;
             }
             TogglePlayerControllable(playerid,1);
             inCarsMenu[playerid] = 0;
@@ -988,16 +989,16 @@ dcmd_ready(playerid, params[])
    #pragma unused params
 
    new c = gPlayerData[playerid][pCurrentCar];
-	if(c>=3)
+	if(c>=CARS_NUMBER)
 	{
-		if(gPlayerData[playerid][pRentedCarRaces][c-3]==0 && !gPlayerData[playerid][pReady])
+		if(gPlayerData[playerid][pRentedCarRaces][c-CARS_NUMBER]==0 && !gPlayerData[playerid][pReady])
 		{
 			SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Выберите другой арендный автомобиль.");
 			return 1;	
 		}
 		
 	}
-	else if(c>=0 && c<3)
+	else if(c>=0 && c<CARS_NUMBER)
 	{
 		if(gPlayerData[playerid][pBoughtCarsHealth][c]==0 && !gPlayerData[playerid][pReady])
 		{
@@ -1398,8 +1399,8 @@ public giveCar(playerid, modelid, world)
 	    gGiveCarTimer[playerid] = SetTimerEx("giveCar",TIME_GIVE_CAR,0,"dd",playerid, modelid);
 	} else {
 		// rent system: has to subtract one
-		if(gPlayerData[playerid][pCurrentCar]>=3)
-			gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]-3] -= 1;
+		if(gPlayerData[playerid][pCurrentCar]>=CARS_NUMBER)
+			gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]-CARS_NUMBER] -= 1;
 		// some payments from car owner?
 		
 		//vehicles[playerid] =
@@ -2609,8 +2610,8 @@ CurrentCar(playerid) {
     new c = gPlayerData[playerid][pCurrentCar];
     if (c < 0)
         return 404;
-    if (c >= 3) {
-        c -= 3;
+    if (c >= CARS_NUMBER) {
+        c -= CARS_NUMBER;
     }
     return shopCarIds[c];
 }
