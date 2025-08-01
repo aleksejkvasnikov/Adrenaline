@@ -915,7 +915,7 @@ public updateTime()
 	timeconvert(Time, gMinutes, gSeconds, MSeconds);
 	gindex=0;
 	while (gSeconds > 9)
-	{ehi
+	{
 		gSeconds-=10;
 		gindex++;
 	}
