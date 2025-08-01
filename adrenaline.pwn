@@ -10,7 +10,7 @@
 //        Simon: Used ConvertToSafeInput() as base for CheckSafeInput()      //
 //                            Dabombber: TimeConvert()                       //
 //             Yagu: Referenced his race filterscript early on               //
-//             http://forum.sa-mp.com/index.php?topic=2067.0                //
+//             http://forum.sa-mp.com/index.php?topic=20637.0                //
 //                                                                           //
 //                                                                           //
 //                                 Testing:                                  //
