@@ -29,7 +29,7 @@
 #define TIME_PUT_PLAYER 3000
 #define TIME_SHOW_VOTE 4000
 #define TIME_TO_FINISH_MENU 512
-#define CARS_NUMBER
+#define CARS_NUMBER 3
 
 #define SPARE_CARS 2 //number of spare cars per race
 #define RACES_TILL_MODECHANGE 0 //for use if you just want a few races to play then change to another mode
