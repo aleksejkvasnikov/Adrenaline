@@ -29,6 +29,7 @@
 #define TIME_PUT_PLAYER 3000
 #define TIME_SHOW_VOTE 4000
 #define TIME_TO_FINISH_MENU 512
+#define CARS_NUMBER 3
 
 #define SPARE_CARS 2 //number of spare cars per race
 #define RACES_TILL_MODECHANGE 0 //for use if you just want a few races to play then change to another mode
@@ -54,9 +55,10 @@ enum E_PLAYER_DATA {
     pMoney,
     pSkin,
     pReady,
-    pBoughtCarsHealth[3],
-    pRentedCarRaces[3],
-    pCurrentCar
+    pBoughtCarsHealth[CARS_NUMBER],
+    pRentedCarRaces[CARS_NUMBER],
+    pCurrentCar,
+    pCurrentRent
 };
 new gPlayerData[MAX_PLAYERS][E_PLAYER_DATA];
 
@@ -102,6 +104,7 @@ new Menu:rentCarMenu[MAX_PLAYERS];
 new Menu:carColorMenu[MAX_PLAYERS];
 new Menu:rentCarRacesMenu[MAX_PLAYERS];
 new Menu:buildMenu[MAX_PLAYERS];
+new inGarageMenu[MAX_PLAYERS];
 new inCarsMenu[MAX_PLAYERS];
 new inCarsMenuFinished[MAX_PLAYERS];
 new carTypeSelection[MAX_PLAYERS];
@@ -163,7 +166,7 @@ new const RankNames[MAX_RANKS][] = {
     "The Boss"
 };
 
-new const shopCarIds[3] = {
+new const shopCarIds[CARS_NUMBER] = {
     551,
     521,
     500
@@ -275,8 +278,8 @@ public OnPlayerSelectedMenuRow(playerid, row)
         new c = gPlayerData[playerid][pCurrentCar];
         switch (row) {
             case 0: {
-	            DestroyMenu(buyCarMenu[playerid]);
-	            buyCarMenu[playerid] = CreateMenu("Choose a Car",1, 50.0, 200.0, 320.0, 250.0);
+                DestroyMenu(buyCarMenu[playerid]);
+                buyCarMenu[playerid] = CreateMenu("Choose a Car",1, 50.0, 200.0, 320.0, 250.0);
                 AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("Merit", 0, playerid, c));
                 AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("FCR-900", 1, playerid, c));
                 AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("Mesa", 2, playerid, c));
@@ -293,11 +296,12 @@ public OnPlayerSelectedMenuRow(playerid, row)
         }
 		return 1;
     } else if (Current == buyCarMenu[playerid]) {
-        if (gPlayerData[playerid][pCurrentCar] < 0) {
+        if (inGarageMenu[playerid] == 1) {
             if (gPlayerData[playerid][pBoughtCarsHealth][row] == 0) {
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] машина не куплена");
             } else {
                 gPlayerData[playerid][pCurrentCar] = row;
+                gPlayerData[playerid][pCurrentRent] = 0;
             }
             TogglePlayerControllable(playerid,1);
             inCarsMenu[playerid] = 0;
@@ -322,11 +326,12 @@ public OnPlayerSelectedMenuRow(playerid, row)
         }
 		return 1;
     } else if (Current == rentCarMenu[playerid]) {
-        if (gPlayerData[playerid][pCurrentCar] < 0) {
+        if (inGarageMenu[playerid] == 1) {
             if (gPlayerData[playerid][pRentedCarRaces][row] == 0) {
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] машина не арендована");
             } else {
-                gPlayerData[playerid][pCurrentCar] = row + 3;
+                gPlayerData[playerid][pCurrentCar] = row;
+                gPlayerData[playerid][pCurrentRent] = 1;
             }
             TogglePlayerControllable(playerid,1);
             inCarsMenu[playerid] = 0;
@@ -555,13 +560,13 @@ ColorMenu(playerid) {
 
 FormatCarPurchase(name[], row, playerid, c) {
     new cmsg[256];
-    format(cmsg,256,"%s%s%s", c + 1 == -row ? "#" : "", name, gPlayerData[playerid][pBoughtCarsHealth][row] > 0 ? "(*)" : "");
+    format(cmsg,256,"%s%s%s", c == row && gPlayerData[playerid][pCurrentRent] == 0 ? "#" : "", name, gPlayerData[playerid][pBoughtCarsHealth][row] > 0 ? "(*)" : "");
     return cmsg;
 }
 
 FormatCarRent(name[], row, playerid, c) {
     new cmsg[256];
-    format(cmsg,256,"%s%s(%d)", c + 4 == -row ? "#" : "", name, gPlayerData[playerid][pRentedCarRaces][row]);
+    format(cmsg,256,"%s%s(%d)", c == row && gPlayerData[playerid][pCurrentRent] == 1 ? "#" : "", name, gPlayerData[playerid][pRentedCarRaces][row]);
     return cmsg;
 }
 
@@ -959,17 +964,15 @@ dcmd_track(playerid, params[])  //Admin command to force a change to the specifi
 
 garage(playerid) {
     TogglePlayerControllable(playerid,0);
-    if (gPlayerData[playerid][pCurrentCar] >= 0)
-        gPlayerData[playerid][pCurrentCar] = -gPlayerData[playerid][pCurrentCar] - 1;
     inCarsMenu[playerid] = 1;
+    inGarageMenu[playerid] = 1;
     ShowMenuForPlayer(garageMenu,playerid);
 }
 
 shop(playerid) {
     TogglePlayerControllable(playerid,0);
     inCarsMenu[playerid] = 1;
-    if (gPlayerData[playerid][pCurrentCar] < 0)
-        gPlayerData[playerid][pCurrentCar] = -gPlayerData[playerid][pCurrentCar] - 1;
+    inGarageMenu[playerid] = 0;
     ShowMenuForPlayer(carShopMenu,playerid);
 }
 
@@ -988,16 +991,16 @@ dcmd_ready(playerid, params[])
    #pragma unused params
 
    new c = gPlayerData[playerid][pCurrentCar];
-	if(c>=3)
+	if(gPlayerData[playerid][pCurrentRent] == 1)
 	{
-		if(gPlayerData[playerid][pRentedCarRaces][c-3]==0 && !gPlayerData[playerid][pReady])
+		if(gPlayerData[playerid][pRentedCarRaces][c]==0 && !gPlayerData[playerid][pReady])
 		{
 			SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Выберите другой арендный автомобиль.");
 			return 1;	
 		}
 		
 	}
-	else if(c>=0 && c<3)
+	else if(c>=0 && c<CARS_NUMBER)
 	{
 		if(gPlayerData[playerid][pBoughtCarsHealth][c]==0 && !gPlayerData[playerid][pReady])
 		{
@@ -1398,8 +1401,8 @@ public giveCar(playerid, modelid, world)
 	    gGiveCarTimer[playerid] = SetTimerEx("giveCar",TIME_GIVE_CAR,0,"dd",playerid, modelid);
 	} else {
 		// rent system: has to subtract one
-		if(gPlayerData[playerid][pCurrentCar]>=3)
-			gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]-3] -= 1;
+		if(gPlayerData[playerid][pCurrentRent]==1)
+			gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]] -= 1;
 		// some payments from car owner?
 		
 		//vehicles[playerid] =
@@ -1658,9 +1661,10 @@ public RemovePlayersFromVehicles()
 				continue;
 			}
 			// если машины нет, то игрок обратно на остров + становится не готов
-			if(gPlayerData[i][pReady] && gPlayerData[i][pCurrentCar]>=3)
+
+			if(gPlayerData[i][pCurrentRent]==1)
 			{
-				if(gPlayerData[i][pRentedCarRaces][gPlayerData[i][pCurrentCar]-3]==0)
+				if(gPlayerData[i][pRentedCarRaces][gPlayerData[i][pCurrentCar]]==0)
 				{
 					SetPlayerVirtualWorld(i, 0);
 					SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
@@ -2551,8 +2555,8 @@ public GridSetup(playerid)
 	//vehicles[playerid]=-1;
 	new Float:distance;
 	// rent system: has to subtract one
-	if(gPlayerData[playerid][pCurrentCar]>=3)
-		gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]-3] -= 1;
+	if(gPlayerData[playerid][pCurrentRent]==1)
+		gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]] -= 1;
 	if (gGridCount>1)
 	{
 		distance=10.0;
@@ -2611,11 +2615,9 @@ public GridSetup(playerid)
 
 CurrentCar(playerid) {
     new c = gPlayerData[playerid][pCurrentCar];
-    if (c < 0)
+    if (c < 0 || gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] == 0
+              || gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] == 0)
         return 404;
-    if (c >= 3) {
-        c -= 3;
-    }
     return shopCarIds[c];
 }
 
@@ -3213,7 +3215,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		gPlayerData[playerid][pRentedCarRaces][0] = 0;
 		gPlayerData[playerid][pRentedCarRaces][1] = 0;
 		gPlayerData[playerid][pRentedCarRaces][2] = 0;
-		gPlayerData[playerid][pCurrentCar] = 0;
+		gPlayerData[playerid][pCurrentCar] = -1;
         SetSpawnInfo(playerid, 0, 137, 27.24 + random(2), 3422.45, 6.2, 0.0,
                      0, 0, 0, 0, 0, 0);
         TogglePlayerSpectating(playerid, false);
