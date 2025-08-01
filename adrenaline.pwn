@@ -1639,7 +1639,7 @@ public RemovePlayersFromVehicles()
 
 		new State = GetPlayerState(i);
 
-		if (xRaceBuilding[i] == 0 && State > 1)
+		if (xRaceBuilding[i] == 0 && State > 1 && gGrided[i] == 1)
 		{
 			RemovePlayerFromVehicle(i);
 			// Готовый игрок — просто замораживаем его машину
@@ -1651,14 +1651,18 @@ public RemovePlayersFromVehicles()
 			if (!gPlayerData[i][pReady])
 			{
 				// НЕ ГОТОВ — безопасный телепорт
+				SetPlayerVirtualWorld(i, 0);
 				SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
 				SetPlayerFacingAngle(i, 270.0);
 				SetCameraBehindPlayer(i);
+				continue;
 			}
 			// если машины нет, то игрок обратно на остров + становится не готов
-			if(gPlayerData[i][pCurrentCar]>=3)
+			if(gPlayerData[i][pReady] && gPlayerData[i][pCurrentCar]>=3)
+			{
 				if(gPlayerData[i][pRentedCarRaces][gPlayerData[i][pCurrentCar]-3]==0)
 				{
+					SetPlayerVirtualWorld(i, 0);
 					SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
 					SetPlayerFacingAngle(i, 270.0);
 					SetCameraBehindPlayer(i);
@@ -1670,7 +1674,7 @@ public RemovePlayersFromVehicles()
 					GameTextForPlayer(i, status, 2000, 3);
 					UpdatePlayerRankHUD(i);			
 				}
-	  
+	  		}
 		}
 	}
 }
@@ -2838,7 +2842,7 @@ StartRace()
 {
 	for(new i;i<MAX_PLAYERS;i++)
 	{
-  	if (IsPlayerConnected(i) && xRaceBuilding[i] == 0 && spawned[i] == 1 && gPlayerData[i][pReady])
+  	if (IsPlayerConnected(i) && xRaceBuilding[i] == 0 && spawned[i] == 1 && gGrided[i] == 1)
 		{
 		    GameTextForPlayer(i,"~W~GO", 2000, 5);
 			TogglePlayerControllable(i, 1);
@@ -2899,7 +2903,7 @@ public Countdowntimer()
 			{
 				if (IsPlayerConnected(i) && xRaceBuilding[i] == 0 && spawned[i] == 1 && gPlayerData[i][pReady])
 				{
-					TogglePlayerControllable(i, 0);
+					TogglePlayerControllable(i, false);
 					PlaySoundForPlayer(i, 1056);
 					GameTextForPlayer(i, message, 750, 5);
 				}
@@ -2914,7 +2918,7 @@ public Countdowntimer()
 			{
 				if (IsPlayerConnected(i) && xRaceBuilding[i] == 0 && spawned[i] == 1 && gPlayerData[i][pReady])
 				{
-					TogglePlayerControllable(i, 0);
+					TogglePlayerControllable(i, false);
 					GameTextForPlayer(i, message, 750, 5);
 				}
 			}
@@ -2928,7 +2932,7 @@ public Countdowntimer()
 			{
 				if (IsPlayerConnected(i) && xRaceBuilding[i] == 0 && spawned[i] == 1 && gPlayerData[i][pReady])
 				{
-					TogglePlayerControllable(i, 0);
+					TogglePlayerControllable(i, false);
 					SetCameraBehindPlayer(i);
 					GameTextForPlayer(i, message, 750, 5);
 				}
@@ -3014,7 +3018,7 @@ public OnPlayerConnect(playerid)
 {
     printf("[DEBUG] OnPlayerConnect: playerid=%d", playerid);
     TogglePlayerSpectating(playerid, true); // важно
-    gPlayerData[playerid][pReady] = 0;
+    gPlayerData[playerid][pReady] = false;
     CreateSIObjects(playerid);
     new name[MAX_PLAYER_NAME], path[64];
     GetPlayerName(playerid, name, sizeof(name));
