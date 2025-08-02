@@ -767,7 +767,7 @@ public OnPlayerSpawn(playerid)
 
     if (!gPlayerData[playerid][pReady])
     {
-        SendClientMessage(playerid, COLOR_TEMP, "[INFO] You are not marked as READY. Use /ready to join the next race.");
+        SendClientMessage(playerid, -1, "{00DDDD}[ИНФО]{FFFFFF} Вы не готовы к гонке. Используйте команду {00FF00}/ready{FFFFFF}, чтобы присоединиться к следующей гонке.");
         return 1; // Не запускаем гонку
     }
 
@@ -1676,20 +1676,24 @@ public countVotes()
 		
 	}
 
-	if (votes>0)
+	if (votes > 0)
 	{
- 		new rand = random(equal+1);
-		gNextTrack = gVoteItems[equalvotes[rand]];
-		gTrackTime=7;
-		format(vmsg,156,"Голосование закончено! %s побеждает с %d голосами. Меняем через 10 секунд...",gVoteItems[equalvotes[rand]],gVotes[index]);
-		SendClientMessageToAll(COLOR_TEMP, vmsg);
-	} else {
-	    new rand;
-	    rand=random(4);
-	    gNextTrack = gVoteItems[rand];
-		format(vmsg,156,"Голосование закончено! Голосов не было, рандомно выбираем %s. Меняем через 10 секунд...",gVoteItems[rand]);
-		SendClientMessageToAll(COLOR_TEMP, vmsg);
+	    new rand = random(equal + 1);
+	    gNextTrack = gVoteItems[equalvotes[rand]];
+	    gTrackTime = 7;
+	
+	    format(vmsg, sizeof(vmsg), "{00DDDD}[ГОНКА]{FFFFFF} Голосование завершено! {FFD700}%s{FFFFFF} побеждает с {FF5500}%d{FFFFFF} голосами. Переход через 10 секунд...", gVoteItems[equalvotes[rand]], gVotes[index]);
+	    SendClientMessageToAll(-1, vmsg);
 	}
+	else
+	{
+	    new rand = random(4);
+	    gNextTrack = gVoteItems[rand];
+	
+	    format(vmsg, sizeof(vmsg), "{00DDDD}[ГОНКА]{FFFFFF} Голосование завершено! Голосов не было. Случайно выбрана трасса: {FFD700}%s{FFFFFF}. Переход через 10 секунд...", gVoteItems[rand]);
+	    SendClientMessageToAll(-1, vmsg);
+	}
+	
 
 }
 
@@ -2946,9 +2950,9 @@ public nextRaceCountdown()
 	    }
 	    case 20,30:
 	    {
-	        new msg[128];
-	        format(msg,128,"%d секунд до следующей гонки.",gTrackTime);
-	        SendClientMessageToAll(COLOR_TEMP,msg);
+			new msg[128];
+			format(msg, sizeof(msg), "{00DDDD}[ИНФО]{FFFFFF} До старта следующей гонки осталось {FFD700}%d {FFFFFF}секунд.", gTrackTime);
+			SendClientMessageToAll(-1, msg);
 	    }
 	    case 10:
 	    {
@@ -3246,7 +3250,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
             LoadPlayerData(playerid); // включает SetSpawnInfo и SpawnPlayer
 
-            SendClientMessage(playerid, -1, "[УСПЕХ] Авторизация успешна!");
+            SendClientMessage(playerid, -1, "{00FF00}[УСПЕХ]{FFFFFF} Авторизация успешна!");
         }
         else
         {
@@ -3379,8 +3383,16 @@ stock InitPlayerInterface(playerid)
     //if (gTotalRacers == 0)
     //    LoadRace(gTrackName);
 
-    SendClientMessage(playerid, COLOR_TEMP, "Welcome to Adrenaline 2.0 by Paige. The #1 SA-MP Racing mode! NEW: Can now make and save races in-game!");
-    SendClientMessage(playerid, COLOR_TEMP, "Команды: '/newcar' '/rescueme' '/ready'");
+    //SendClientMessage(playerid, COLOR_TEMP, "Welcome to Adrenaline 2.0 by Paige. The #1 SA-MP Racing mode! NEW: Can now make and save races in-game!");
+    //SendClientMessage(playerid, COLOR_TEMP, "Команды: '/newcar' '/rescueme' '/ready'");
+	new msg1[256], msg2[256];
+	
+	format(msg1, sizeof(msg1), "{FFD700}Welcome to {FF5500}Adrenaline 2.0{FFD700} by {00DDDD}Paige{FFFFFF}. The {FF5500}#1 SA-MP Racing{FFFFFF} mode! {00FF00}NEW{FFFFFF}: Can now make and save races in-game!");
+	
+	format(msg2, sizeof(msg2),  "{00DDDD}Команды:{FFFFFF} {00FF00}/newcar{FFFFFF}, {00FF00}/rescueme{FFFFFF}, {00FF00}/ready");
+	
+	SendClientMessage(playerid, -1, msg1);
+	SendClientMessage(playerid, -1, msg2);
 
     // Цвет ранга
     new rank = gPlayerData[playerid][pRank];
@@ -3460,7 +3472,7 @@ ReadHighScoreList(track[256], display, playerid, all)
 				else format(sSeconds, sizeof(sSeconds), "%d", Seconds);
 				if (MSeconds < 100)format(sMSeconds, sizeof(sMSeconds), "0%d", MSeconds);
 				else format(sMSeconds, sizeof(sMSeconds), "%d", MSeconds);
-				if (Minutes != 50)	format(himsg, sizeof(himsg),"%d - %d:%s.%s установлен %s\n", i+1, Minutes, sSeconds, sMSeconds, HSList[i][rRacer]);
+				if (Minutes != 50)	format(himsg, sizeof(himsg), "{00DDDD}[РЕКОРД]{FFFFFF} #%d — {FFD700}%d:%s.%s{FFFFFF}, установлен {00FF00}%s{FFFFFF}\n", i+1, Minutes, sSeconds, sMSeconds, HSList[i][rRacer]);
 				else format(himsg, sizeof(himsg),"\n");
 				if(playerid==-1 || IsPlayerAdmin(playerid) && all)
 				{
@@ -3513,7 +3525,7 @@ CheckAgainstHighScore(playerid, time)
 	           //personal flag must always be equal or nonexistant (-1) for a valid (personal) record
 			new newrecordmessage[256];
 			if (i+1 == 1) printf("НОВЫЙ РЕКОРД - %s", playername2);
-			format(newrecordmessage, sizeof(newrecordmessage),"Новый рекорд (%d) на %s установлен %s\n" , i+1, gTrackName, playername2);
+			format(newrecordmessage, sizeof(newrecordmessage), "{00DDDD}[РЕКОРД]{FFFFFF} Новый рекорд #{FFD700}%d{FFFFFF} на трассе {FFD700}%s{FFFFFF} установлен {00FF00}%s{FFFFFF}\n", i+1, gTrackName, playername2);
 			SendClientMessageToAll(COLOR_TEMP, newrecordmessage);
 			recordflag = i;
 			//Record number
