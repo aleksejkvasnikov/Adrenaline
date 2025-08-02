@@ -1065,7 +1065,7 @@ dcmd_ready(playerid, params[])
 
     if (gPlayerData[playerid][pReady])
     {
-        SendClientMessage(playerid, COLOR_TEMP, "[STATUS] You are now marked as READY for the next race.");
+		SendClientMessage(playerid, -1, "{00DDDD}[СТАТУС]{FFFFFF} Вы отмечены как {00FF00}ГОТОВЫЙ{FFFFFF} для следующей гонки.");
         format(status, sizeof(status), "~g~READY");
 
 		Tposition[playerid] = TextDrawCreate(560.0, 330.0, " ");
@@ -1099,7 +1099,7 @@ dcmd_ready(playerid, params[])
     }
     else
     {
-        SendClientMessage(playerid, COLOR_TEMP, "[STATUS] You are now marked as NOT READY.");
+		SendClientMessage(playerid, -1, "{00DDDD}[СТАТУС]{FFFFFF} Вы отмечены как {FF0000}НЕ ГОТОВЫЙ{FFFFFF}.");
         format(status, sizeof(status), "~r~NOT READY");
     }
 
@@ -2900,10 +2900,17 @@ LoadRace(racename[])
 	gRaceStarted=0;
 	gFinished=0;
 	createVote();
-	new tempTime[256];
+	new tempTime[144];
 	tempTime = HighScore(0);
-	format(gBestTime,sizeof(gBestTime),"<> %s by %s | %s <>\n",gTrackName,gRaceMaker, tempTime);
-	SendClientMessageToAll(COLOR_TEMP,gBestTime);
+	
+	// Первое сообщение — заголовок трассы и автора
+	format(gBestTime, sizeof(gBestTime),
+		"{FFD700}<>{FFFFFF} Трасса: {FFD700}%s{FFFFFF} | Автор: {00FF00}%s{FFFFFF}",
+		gTrackName, gRaceMaker);
+	SendClientMessageToAll(-1, gBestTime);
+	
+	// Второе сообщение — рекорд
+	SendClientMessageToAll(-1, tempTime);
 	print("Гонка загружена");
 	return 1;
 }
@@ -3388,14 +3395,15 @@ stock InitPlayerInterface(playerid)
 
     //SendClientMessage(playerid, COLOR_TEMP, "Welcome to Adrenaline 2.0 by Paige. The #1 SA-MP Racing mode! NEW: Can now make and save races in-game!");
     //SendClientMessage(playerid, COLOR_TEMP, "Команды: '/newcar' '/rescueme' '/ready'");
-	new msg1[256], msg2[256];
+	new msg1[144], msg2[144], msg3[144];
 	
-	format(msg1, sizeof(msg1), "{FFD700}Welcome to {FF5500}Adrenaline 2.0{FFD700} by {00DDDD}Paige{FFFFFF}. The {FF5500}#1 SA-MP Racing{FFFFFF} mode! {00FF00}NEW{FFFFFF}: Can now make and save races in-game!");
-	
-	format(msg2, sizeof(msg2),  "{00DDDD}Команды:{FFFFFF} {00FF00}/newcar{FFFFFF}, {00FF00}/rescueme{FFFFFF}, {00FF00}/ready");
+	format(msg1, sizeof(msg1), "{FFD700}Welcome to {FF5500}Adrenaline 2.0{FFD700} by {00DDDD}Paige{FFFFFF}.");
+	format(msg2, sizeof(msg2), "The {FF5500}#1 SA-MP Racing{FFFFFF} mode! {00FF00}NEW{FFFFFF}: in-game race creation and saving.");
+	format(msg3, sizeof(msg3), "{00DDDD}Команды:{FFFFFF} {00FF00}/newcar{FFFFFF}, {00FF00}/rescueme{FFFFFF}, {00FF00}/ready");
 	
 	SendClientMessage(playerid, -1, msg1);
 	SendClientMessage(playerid, -1, msg2);
+	SendClientMessage(playerid, -1, msg3);
 
     // Цвет ранга
     new rank = gPlayerData[playerid][pRank];
@@ -3655,49 +3663,52 @@ HighScore(Track)
 {
 	#pragma unused Track
 	new recordtimestr[20], recordtime;
-	new racer[256];
-	new HighScoreString[256];
+	new racer[64]; // не нужен такой большой буфер
+	new HighScoreString[144]; // строго по лимиту
 
-
-
-	new tmp1[255];
-	format(tmp1,sizeof(tmp1),"%s.txt", gTrackName);
+	new tmp1[128];
+	format(tmp1, sizeof(tmp1), "%s.txt", gTrackName);
 
 	if (!fexist(tmp1))
 	{
 	    new File: file1 = fopen(tmp1, io_write);
 	    fclose(file1);
 	}
+
 	new File: file = fopen(tmp1, io_read);
-	new line[256];
-	new track[256];
+	new line[256], track[64];
 	new idx;
 
-	fread(file, line, sizeof (line));
+	fread(file, line, sizeof(line));
 	track = strtok(line, idx);
 	recordtimestr = strtok(line, idx);
 	racer = strtok(line, idx);
-	fclose (file);
-	recordtime = strval(recordtimestr);
+	fclose(file);
 
+	recordtime = strval(recordtimestr);
 
 	new Minutes, Seconds, MSeconds, sSeconds[5], sMSeconds[5];
 	if (recordtime > 0)
 	{
 		timeconvert(recordtime, Minutes, Seconds, MSeconds);
 
-		if (Seconds < 10)format(sSeconds, sizeof(sSeconds), "0%d", Seconds);
-		else format(sSeconds, sizeof(sSeconds), "%d", Seconds);
-		if (MSeconds < 100)format(sMSeconds, sizeof(sMSeconds), "0%d", MSeconds);
-		else format(sMSeconds, sizeof(sMSeconds), "%d", MSeconds);
+		format(sSeconds, sizeof(sSeconds), Seconds < 10 ? "0%d" : "%d", Seconds);
+		format(sMSeconds, sizeof(sMSeconds), MSeconds < 100 ? "0%d" : "%d", MSeconds);
 
-		format(HighScoreString,sizeof(HighScoreString),"Рекорд: %d:%s.%s установлен %s \n", Minutes, sSeconds, sMSeconds, racer);
-	} else {
-		format(HighScoreString,sizeof(HighScoreString),"Нет текущего рекорда. \n");
+		// Цветной формат с меткой [РЕКОРД]
+		format(HighScoreString, sizeof(HighScoreString),
+			"{00DDDD}[РЕКОРД]{FFFFFF} %d:%s.%s — {00FF00}%s{FFFFFF}",
+			Minutes, sSeconds, sMSeconds, racer);
+	}
+	else
+	{
+		format(HighScoreString, sizeof(HighScoreString),
+			"{00DDDD}[РЕКОРД]{FFFFFF} Нет текущего рекорда.");
 	}
 
 	return HighScoreString;
 }
+
 
 /*
 findHighest()
