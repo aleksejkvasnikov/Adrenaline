@@ -1473,9 +1473,9 @@ public giveCar(playerid, modelid, world)
 processCarProperty(playerid, vehicleid) {		
 	// rent system: has to subtract one
 	new health = gPlayerData[playerid][pBoughtCarsHealth][gPlayerData[playerid][pCurrentCar]];
-	if(gPlayerData[playerid][pCurrentRent]==1 && gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]] == 0) {
+	if(gPlayerData[playerid][pCurrentRent]==1 && gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]] != 0) {
 		gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]] -= 1;
-	} else if (health >= 25) {
+	} else if (gPlayerData[playerid][pCurrentRent]==0 && health >= 25) {
 	    SetVehicleHealth(vehicleid, health * 10);
 	    playerCreatedVehicle[playerid] = vehicleid;
 	}
