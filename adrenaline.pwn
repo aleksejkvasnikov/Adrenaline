@@ -2620,9 +2620,6 @@ public GridSetup(playerid)
 {	//Staggered Grid Modified from Y_Less's GetXYInFrontOfPlayer() function
 	//vehicles[playerid]=-1;
 	new Float:distance;
-	// rent system: has to subtract one
-	if(gPlayerData[playerid][pCurrentRent]==1)
-		gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]] -= 1;
 	if (gGridCount>1)
 	{
 		distance=10.0;
