@@ -934,6 +934,7 @@ public updateTime()
 	new tmp[10];
 	format(tmp,10,"%d:%d%d",gMinutes,gindex,gSeconds);
 	TextDrawSetString(Ttime, tmp);
+	printf("Ttime on update is %d", Ttime);
 
 
 }
@@ -941,6 +942,7 @@ public updateTime()
 createTextDraws()
 {
 	Ttime = TextDrawCreate(563.0, 376.0, "0");
+	printf("Ttime on creation is %d", Ttime);
 	TextDrawLetterSize(Ttime, 0.6, 3);
 	Ttotalracers = TextDrawCreate(590.0, 355.0, "/0");
 	TextDrawLetterSize(Ttotalracers, 0.5, 2.5);
