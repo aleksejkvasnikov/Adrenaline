@@ -55,6 +55,7 @@ enum E_PLAYER_DATA {
     pMoney,
     pSkin,
     pReady,
+	pIngame,
     pBoughtCarsHealth[CARS_NUMBER],
     pRentedCarRaces[CARS_NUMBER],
     pBoughtCarColor[CARS_NUMBER],
@@ -1039,7 +1040,7 @@ dcmd_ready(playerid, params[])
 {
    #pragma unused params
 
-   new c = gPlayerData[playerid][pCurrentCar];
+   /*new c = gPlayerData[playerid][pCurrentCar];
 	if(gPlayerData[playerid][pCurrentRent] == 1)
 	{
 		if(gPlayerData[playerid][pRentedCarRaces][c]==0 && !gPlayerData[playerid][pReady])
@@ -1056,7 +1057,7 @@ dcmd_ready(playerid, params[])
 			SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Выберите другой автомобиль.");
 			return 1;	
 		}
-	}
+	}*/
 	
 	
     gPlayerData[playerid][pReady] = !gPlayerData[playerid][pReady];
@@ -1705,8 +1706,7 @@ public RemovePlayersFromVehicles()
 		if (!IsPlayerConnected(i)) continue;
 
 		new State = GetPlayerState(i);
-
-		if (xRaceBuilding[i] == 0 && State > 1 && gGrided[i] == 1)
+		if (xRaceBuilding[i] == 0 && State > 1 && gPlayerData[i][pIngame] == 1)
 		{
 			RemovePlayerFromVehicle(i);
 			// Готовый игрок — просто замораживаем его машину
@@ -1719,6 +1719,7 @@ public RemovePlayersFromVehicles()
 			{
 				// НЕ ГОТОВ — безопасный телепорт
 				SetPlayerVirtualWorld(i, 0);
+				gPlayerData[i][pIngame] = 0;
 				SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
 				SetPlayerFacingAngle(i, 270.0);
 				SetCameraBehindPlayer(i);
@@ -1730,12 +1731,12 @@ public RemovePlayersFromVehicles()
 			{
 				if(gPlayerData[i][pRentedCarRaces][gPlayerData[i][pCurrentCar]]==0)
 				{
+					gPlayerData[i][pIngame] = 0;
+					gPlayerData[i][pReady] = !gPlayerData[i][pReady];
 					SetPlayerVirtualWorld(i, 0);
 					SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
 					SetPlayerFacingAngle(i, 270.0);
 					SetCameraBehindPlayer(i);
-					
-					gPlayerData[i][pReady] = !gPlayerData[i][pReady];
 					new status[16];
 					SendClientMessage(i, COLOR_TEMP, "[STATUS] You are now marked as NOT READY.");
 					format(status, sizeof(status), "~r~NOT READY");
@@ -1755,6 +1756,8 @@ public changetrack()
 	{
 		gGridIndex=0;
 		gGrid2Index=0;
+	    printf("DEBUG changetrack");
+
 		for (new i=0;i<MAX_PLAYERS;i++)
 		{
 			gScores2[i][0]=gScores[i][0];
@@ -2350,9 +2353,11 @@ CreateCarShop() {
     vehicle3Dtext = Create3DTextLabel( "$625", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
-    carShopPickup = CreatePickup(1274, 23, 2.34296, 3412, 5.29753);
+    carShopPickup = CreatePickup(1274, 23, 1.54296, 3414, 5.29753);
     garagePickup = CreatePickup(19320, 23, 2.54296, 3414, 5.29753);
-    
+    Create3DTextLabel("Покупка и аренда машин", 0x008080FF, 1.54296, 3414, 5.29753, 40.0, 0, false);
+    Create3DTextLabel("Гараж", 0x008080FF, 2.54296, 3414, 5.29753, 40.0, 0, false);
+
 	carShopMenu = CreateMenu("Cars",1, 50.0, 200.0, 120.0, 250.0);
     AddMenuItem(carShopMenu,0,"Buy");
     AddMenuItem(carShopMenu,0,"Rent");
@@ -2406,6 +2411,7 @@ AddPlayersToRace(num)
 		new j = gScores2[i][0];
 		if (IsPlayerConnected(j) && gGrided[j]==0 && xRaceBuilding[j]==0 && spawned[j]==1 && gPlayerData[j][pReady])
 		{
+			gPlayerData[j][pIngame] = 1;
 			if (gGrid2Count>1)
 			{
 				distance=10.0;
@@ -2465,6 +2471,7 @@ public AddRacers(num)
 		new j = gScores2[i][0];
 		if (IsPlayerConnected(j) && gGrided[j]==0 && xRaceBuilding[j]==0 && spawned[j]==1 && gPlayerData[j][pReady])
 		{
+			//printf("DEBUG AddRacers %d %d", gGrided[j], gPlayerData[j][pReady]);
 			if (gGridCount>1)
 			{
 				distance=10.0;
@@ -2620,6 +2627,9 @@ public GridSetup(playerid)
 {	//Staggered Grid Modified from Y_Less's GetXYInFrontOfPlayer() function
 	//vehicles[playerid]=-1;
 	new Float:distance;
+	// rent system: has to subtract one
+	//if(gPlayerData[playerid][pCurrentRent]==1)
+	//	gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]] -= 1;
 	if (gGridCount>1)
 	{
 		distance=10.0;
@@ -2673,7 +2683,7 @@ public GridSetup(playerid)
     processCarProperty(playerid, vehicles[gGridCount]);
 	gGridCount++;
 	SetCheckpoint(playerid,gPlayerProgress[playerid],gMaxCheckpoints);
-	
+	gGrided[playerid] = 1;
 	printf("GridSetupDebug- time:%d gridpos:%d playerid:%d vehicle:%d",GetTickCount(),gGridCount,playerid,vehicles[gGridCount]);
 	return 1;
 }
@@ -2923,11 +2933,14 @@ SetCheckpoint(playerid, progress, totalchecks)
 
 StartRace()
 {
+
 	for(new i;i<MAX_PLAYERS;i++)
 	{
-  	if (IsPlayerConnected(i) && xRaceBuilding[i] == 0 && spawned[i] == 1 && gGrided[i] == 1)
+		//printf("StartRace FULL %d %d", gGrided[gScores2[i][0]],  gScores2[i][0]);
+		if (IsPlayerConnected(i) && xRaceBuilding[i] == 0 && spawned[i] == 1 && gPlayerData[i][pIngame] == 1)
 		{
-		    GameTextForPlayer(i,"~W~GO", 2000, 5);
+			printf("DEBUG START RACE");
+			GameTextForPlayer(i,"~W~GO", 2000, 5);
 			TogglePlayerControllable(i, 1);
 			PlaySoundForPlayer(i, 1057);
 		}
@@ -3084,6 +3097,7 @@ PlaySoundForPlayer(playerid, soundid)
 
 public PutPlayerInVehicleTimed(playerid, veh, slot)
 {
+	gPlayerData[playerid][pIngame] = 1;
 	PutPlayerInVehicle(playerid,veh,slot);
 	SetCameraBehindPlayer(playerid);
 	if(gRaceStarted==0)TogglePlayerControllable(playerid,false);
@@ -3102,6 +3116,7 @@ public OnPlayerConnect(playerid)
     printf("[DEBUG] OnPlayerConnect: playerid=%d", playerid);
     TogglePlayerSpectating(playerid, true); // важно
     gPlayerData[playerid][pReady] = false;
+	gPlayerData[playerid][pIngame] = false;
     CreateSIObjects(playerid);
     new name[MAX_PLAYER_NAME], path[64];
     GetPlayerName(playerid, name, sizeof(name));
