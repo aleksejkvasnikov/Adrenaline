@@ -333,7 +333,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
                 TogglePlayerControllable(playerid,1);
                 inCarsMenu[playerid] = 0;
                 inCarsMenuFinished[playerid] = 1;
-            } else if (gPlayerData[playerid][pBoughtCarsHealth][row] >= 25) {
+            } else if (gPlayerData[playerid][pBoughtCarsHealth][row] > 0) {
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] уже куплено");
                 TogglePlayerControllable(playerid,1);
                 inCarsMenu[playerid] = 0;
@@ -1041,25 +1041,6 @@ dcmd_shop(playerid, params[]) {
 dcmd_ready(playerid, params[])
 {
    #pragma unused params
-
-   /*new c = gPlayerData[playerid][pCurrentCar];
-	if(gPlayerData[playerid][pCurrentRent] == 1)
-	{
-		if(gPlayerData[playerid][pRentedCarRaces][c]==0 && !gPlayerData[playerid][pReady])
-		{
-			SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Выберите другой арендный автомобиль.");
-			return 1;	
-		}
-		
-	}
-	else if(c>=0 && c<CARS_NUMBER)
-	{
-		if(gPlayerData[playerid][pBoughtCarsHealth][c]<25 && !gPlayerData[playerid][pReady])
-		{
-			SendClientMessage(playerid, COLOR_TEMP, "[ERROR] Выберите другой автомобиль.");
-			return 1;	
-		}
-	}*/
 	
 	
     gPlayerData[playerid][pReady] = !gPlayerData[playerid][pReady];
@@ -1727,25 +1708,6 @@ public RemovePlayersFromVehicles()
 				SetCameraBehindPlayer(i);
 				continue;
 			}
-			// если машины нет, то игрок обратно на остров + становится не готов
-
-			if(gPlayerData[i][pCurrentRent]==1)
-			{
-				if(gPlayerData[i][pRentedCarRaces][gPlayerData[i][pCurrentCar]]==0)
-				{
-					gPlayerData[i][pIngame] = 0;
-					gPlayerData[i][pReady] = !gPlayerData[i][pReady];
-					SetPlayerVirtualWorld(i, 0);
-					SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
-					SetPlayerFacingAngle(i, 270.0);
-					SetCameraBehindPlayer(i);
-					new status[16];
-					SendClientMessage(i, COLOR_TEMP, "[STATUS] You are now marked as NOT READY.");
-					format(status, sizeof(status), "~r~NOT READY");
-					GameTextForPlayer(i, status, 2000, 3);
-					UpdatePlayerRankHUD(i);			
-				}
-	  		}
 		}
 	}
 }
@@ -2627,11 +2589,7 @@ public PullMoney(playerid)
 
 public GridSetup(playerid)
 {	//Staggered Grid Modified from Y_Less's GetXYInFrontOfPlayer() function
-	//vehicles[playerid]=-1;
 	new Float:distance;
-	// rent system: has to subtract one
-	//if(gPlayerData[playerid][pCurrentRent]==1)
-	//	gPlayerData[playerid][pRentedCarRaces][gPlayerData[playerid][pCurrentCar]] -= 1;
 	if (gGridCount>1)
 	{
 		distance=10.0;
@@ -2693,8 +2651,13 @@ public GridSetup(playerid)
 CurrentCar(playerid) {
     new c = gPlayerData[playerid][pCurrentCar];
     if (c < 0 || gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 25
-              || gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] == 0)
+              || gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] == 0) {
+        SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Отсутствуют доступные транспортные средства. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage. Переключение на стандартную бесплатную машину...");
         return 404;
+    } else if (gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 44)
+        SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] У транспортного средства заканчивается здоровье. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
+    else if (gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] < 2)
+        SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Заканчиваются арендованные транспортные средства. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage.");
     return shopCarIds[c];
 }
 
