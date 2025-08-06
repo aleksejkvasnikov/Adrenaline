@@ -2652,11 +2652,14 @@ CurrentCar(playerid) {
     new c = gPlayerData[playerid][pCurrentCar];
     if (c < 0 || gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 25
               || gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] == 0) {
-        SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Отсутствуют доступные транспортные средства. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage. Переключение на стандартную бесплатную машину...");
+        SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Отсутствуют доступные транспортные средства.");
+        SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
+        SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
         return 404;
-    } else if (gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 44)
-        SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] У транспортного средства заканчивается здоровье. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
-    else if (gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] < 2)
+    } else if (gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 44) {
+        SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] У транспортного средства заканчивается здоровье.");
+        SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
+    } else if (gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] < 2)
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Заканчиваются арендованные транспортные средства. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage.");
     return shopCarIds[c];
 }
