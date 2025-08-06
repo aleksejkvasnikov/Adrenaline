@@ -143,6 +143,8 @@ new gScores[MAX_PLAYERS][2];
 new gScores2[MAX_PLAYERS][2];
 new gGrided[MAX_PLAYERS];
 new racecount;
+new gTrackTimeSaved = 0;
+new invalidateResult = 0;
 
 
 new Text:Ttime;
@@ -1065,7 +1067,7 @@ dcmd_ready(playerid, params[])
                 readyCount++;
         }
 
-        if (readyCount == 0 && gTrackTime > 10) // никто больше не готов и гонка ещё не идёт
+        if (gTrackTime > 10) // никто больше не готов и гонка ещё не идёт
         {
 			gTotalRacers++;
 			new tmp[5];
@@ -1079,6 +1081,13 @@ dcmd_ready(playerid, params[])
 
             GridSetupPlayer(playerid);
             SetTimerEx("GridSetup", TIME_GIVE_CAR, 0, "d", playerid);
+            if (readyCount == 0) {
+                gTrackTimeSaved = gTrackTime;
+            }
+            if (gTrackTimeSaved != 0 && abs(gTrackTime - gTrackTimeSaved) > 10) {
+                gTrackTimeSaved = 0;
+                invalidateResult = 1;
+            }
         }
     }
     else
@@ -1092,6 +1101,11 @@ dcmd_ready(playerid, params[])
     return 1;
 }
 
+abs(a) {
+    if (a > 0)
+        return a;
+    return -a;
+}
 
 
 
@@ -3573,6 +3587,10 @@ stock GetPlayerRankByXP(xp)
 
 stock CalculateXPReward(totalPlayers, position)
 {
+    if (invalidateResult == 1) {
+        invalidateResult = 0;
+        return 0;
+    }
     if (totalPlayers <= 1) return 0;
 
     new xpBase = 10;
@@ -3583,6 +3601,10 @@ stock CalculateXPReward(totalPlayers, position)
 
 stock CalculateMoneyReward(totalPlayers, position)
 {
+    if (invalidateResult == 1) {
+        invalidateResult = 0;
+        return 0;
+    }
     if (totalPlayers <= 1) return 0;
 
     new xpBase = 10;
