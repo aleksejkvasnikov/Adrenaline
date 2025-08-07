@@ -2692,6 +2692,27 @@ CurrentCar(playerid) {
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
     } else if (gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] < 2)
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Заканчиваются арендованные транспортные средства. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage.");
+    else {
+        new maxRank = -1;
+        new differentRanks = 0;
+    
+        for (new i = 0; i < MAX_PLAYERS; i++)
+        {
+            if (IsPlayerConnected(i)) {
+                new rank = gPlayerData[i][pRank];
+                if (maxRank != -1 && maxRank != rank)
+                    differentRanks = 1;
+                if (maxRank < rank)
+                    rank = maxRank;
+            }
+            if (differentRanks == 1 && gPlayerData[playerid][pRank] != maxRank) {
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Выполняется уравнивание. Слишком хорошее транспортное средство, выберите другое.");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
+                return 404;
+            }
+        }
+    }
     return shopCarIds[c];
 }
 
