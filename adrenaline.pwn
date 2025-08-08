@@ -29,7 +29,7 @@
 #define TIME_PUT_PLAYER 3000
 #define TIME_SHOW_VOTE 4000
 #define TIME_TO_FINISH_MENU 512
-#define CARS_NUMBER 3
+#define CARS_NUMBER 4
 
 #define SPARE_CARS 2 //number of spare cars per race
 #define RACES_TILL_MODECHANGE 0 //for use if you just want a few races to play then change to another mode
@@ -176,7 +176,24 @@ new const RankNames[MAX_RANKS][] = {
 new const shopCarIds[CARS_NUMBER] = {
     551,
     521,
-    500
+    500,
+    581
+};
+
+new const shopCarNames[CARS_NUMBER][256] = {
+    "Merit",
+    "FCR-900",
+    "Mesa",
+    "BF-400"
+};
+
+
+// cost = https://www.gtabase.com/gta-san-andreas/vehicles/ cost / 40
+new const shopCarCost[CARS_NUMBER] = {
+    875,
+    1250, // x 10
+    625,
+    250
 };
 
 new const RankXP[MAX_RANKS] = {
@@ -264,20 +281,20 @@ public OnPlayerSelectedMenuRow(playerid, row)
             case 0: {
 	            DestroyMenu(buyCarMenu[playerid]);
 	            buyCarMenu[playerid] = CreateMenu("Buy Car",2, 50.0, 200.0, 120.0, 250.0);
-                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("Merit", 0, playerid, c));
-                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("FCR-900", 1, playerid, c));
-                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("Mesa", 2, playerid, c));
-                AddMenuItem(buyCarMenu[playerid],1,"$875");
-                AddMenuItem(buyCarMenu[playerid],1,"$250");
-                AddMenuItem(buyCarMenu[playerid],1,"$625");
+	            for (new i = 0; i < CARS_NUMBER; ++i) {
+                    AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase(shopCarNames[i], i, playerid, c));
+                    new cmsg[256];
+                    format(cmsg, 256, "$%d", shopCarCost[i]);
+                    AddMenuItem(buyCarMenu[playerid],1,cmsg);
+	            }
                 ShowMenuForPlayer(buyCarMenu[playerid],playerid);
             }
             case 1: {
 	            DestroyMenu(rentCarMenu[playerid]);
 	            rentCarMenu[playerid] = CreateMenu("Rent Car",1, 50.0, 200.0, 220.0, 250.0);
-                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("Merit", 0, playerid, c));
-                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("FCR-900", 1, playerid, c));
-                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("Mesa", 2, playerid, c));
+	            for (new i = 0; i < CARS_NUMBER; ++i) {
+                    AddMenuItem(rentCarMenu[playerid],0,FormatCarRent(shopCarNames[i], i, playerid, c));
+                }
                 ShowMenuForPlayer(rentCarMenu[playerid],playerid);
             }
         }
@@ -288,32 +305,27 @@ public OnPlayerSelectedMenuRow(playerid, row)
             case 0: {
                 DestroyMenu(buyCarMenu[playerid]);
                 buyCarMenu[playerid] = CreateMenu("Choose a Car",1, 50.0, 200.0, 320.0, 250.0);
-                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("Merit", 0, playerid, c));
-                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("FCR-900", 1, playerid, c));
-                AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase("Mesa", 2, playerid, c));
+	            for (new i = 0; i < CARS_NUMBER; ++i) {
+                    AddMenuItem(buyCarMenu[playerid],0,FormatCarPurchase(shopCarNames[i], i, playerid, c));
+                }
                 ShowMenuForPlayer(buyCarMenu[playerid],playerid);
             }
             case 1: {
 	            DestroyMenu(rentCarMenu[playerid]);
 	            rentCarMenu[playerid] = CreateMenu("Choose a Car",1, 50.0, 200.0, 220.0, 250.0);
-                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("Merit", 0, playerid, c));
-                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("FCR-900", 1, playerid, c));
-                AddMenuItem(rentCarMenu[playerid],0,FormatCarRent("Mesa", 2, playerid, c));
+	            for (new i = 0; i < CARS_NUMBER; ++i) {
+                    AddMenuItem(rentCarMenu[playerid],0,FormatCarRent(shopCarNames[i], i, playerid, c));
+                }
                 ShowMenuForPlayer(rentCarMenu[playerid],playerid);
             }
             case 2: {
 	            DestroyMenu(repairMenu[playerid]);
 	            repairMenu[playerid] = CreateMenu("Repair Car",2, 50.0, 200.0, 120.0, 250.0);
-                AddMenuItem(repairMenu[playerid],0,FormatCarPurchase("Merit", 0, playerid, c));
-                AddMenuItem(repairMenu[playerid],0,FormatCarPurchase("FCR-900", 1, playerid, c));
-                AddMenuItem(repairMenu[playerid],0,FormatCarPurchase("Mesa", 2, playerid, c));
-                new cmsg[256];
-                format(cmsg, 256, "$%d", carCost[shopCarIds[0]] / 10);
-                AddMenuItem(repairMenu[playerid],1,cmsg);
-                format(cmsg, 256, "$%d", carCost[shopCarIds[1]] / 10);
-                AddMenuItem(repairMenu[playerid],1,cmsg);
-                format(cmsg, 256, "$%d", carCost[shopCarIds[2]] / 10);
-                AddMenuItem(repairMenu[playerid],1,cmsg);
+	            for (new i = 0; i < CARS_NUMBER; ++i) {
+                    AddMenuItem(repairMenu[playerid],0,FormatCarPurchase(shopCarNames[i], i, playerid, c));
+                    new cmsg[256];
+                    format(cmsg, 256, "$%d", carCost[shopCarIds[i]] / 10);
+                }
                 ShowMenuForPlayer(repairMenu[playerid],playerid);
             }
         }
@@ -2295,13 +2307,10 @@ CreateSIObjects(playerid)
 }
 
 CreateCarShop() {    
-    // cost = https://www.gtabase.com/gta-san-andreas/vehicles/ cost / 40
-    carCost[551] = 875;
-    carCost[521] = 250;
-    carCost[500] = 625;
-    carName[551] = "Merit";
-    carName[521] = "FCR-900";
-    carName[500] = "Mesa";
+    for (new i = 0; i < CARS_NUMBER; ++i) {
+        carCost[shopCarIds[i]] = shopCarCost[i];
+        carName[shopCarIds[i]] = shopCarNames[i];
+    }
     
     /*new vehicle_id = AddStaticVehicleEx(541, 17.6, 3405.3, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
@@ -2312,23 +2321,31 @@ CreateCarShop() {
     
     new vehicle_id = AddStaticVehicleEx(551, 16.4, 3405.3, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
-    new vehicle3Dtext = Create3DTextLabel( "Merit", 0xFF0000AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
+    new i = 0;
+    new vehicle3Dtext = Create3DTextLabel(shopCarNames[i++], 0xFF0000AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
     vehicle3Dtext = Create3DTextLabel( "$875", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
 
     vehicle_id = AddStaticVehicleEx(521, 17.6, 3399, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
-    vehicle3Dtext = Create3DTextLabel( "FCR-900", 0xFFF033AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
+    vehicle3Dtext = Create3DTextLabel( shopCarNames[i++], 0xFFF033AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
-    vehicle3Dtext = Create3DTextLabel( "$250", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    vehicle3Dtext = Create3DTextLabel( "$1250", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
     vehicle_id = AddStaticVehicleEx(500, 17.6, 3392.4856, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
-    vehicle3Dtext = Create3DTextLabel( "Mesa", 0xA3F0F3AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
+    vehicle3Dtext = Create3DTextLabel( shopCarNames[i++], 0xA3F0F3AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
     vehicle3Dtext = Create3DTextLabel( "$625", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
+    
+    vehicle_id = AddStaticVehicleEx(581, 17.6, 3385.7856, 5.3, 90.0, -1, -1, 0);
+    SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
+    vehicle3Dtext = Create3DTextLabel( shopCarNames[i++], 0xFFF0F3AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
+    Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
+    vehicle3Dtext = Create3DTextLabel( "$250", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
     carShopPickup = CreatePickup(1274, 23, 1.54296, 3414, 5.29753);
