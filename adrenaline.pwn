@@ -1830,6 +1830,7 @@ public RemovePlayersFromVehicles()
 public changetrack()
 {
 	printf("ћен€ю трек:%s",gNextTrack);
+	invalidateResult = 0;
 	if(LoadRace(gNextTrack))
 	{
 		gGridIndex=0;
@@ -3714,7 +3715,6 @@ stock GetPlayerRankByXP(xp)
 stock CalculateXPReward(totalPlayers, position)
 {
     if (invalidateResult == 1) {
-        invalidateResult = 0;
         return 0;
     }
     if (totalPlayers <= 1) return 0;
@@ -3728,7 +3728,6 @@ stock CalculateXPReward(totalPlayers, position)
 stock CalculateMoneyReward(totalPlayers, position)
 {
     if (invalidateResult == 1) {
-        invalidateResult = 0;
         return 0;
     }
     if (totalPlayers <= 1) return 0;
