@@ -981,7 +981,95 @@ public OnPlayerCommandText(playerid, cmdtext[])
 	dcmd(ready, 5, cmdtext);
 	dcmd(garage, 6, cmdtext);
 	dcmd(shop, 4, cmdtext);
+	dcmd(stadium, 7, cmdtext);
+	dcmd(spawncar, 8, cmdtext);
 	return 0;
+}
+dcmd_spawncar(playerid, params[])
+{
+	if (strlen(params) == 0)
+	{
+	    SendClientMessage(playerid, -1, "Использование: /spawncar [ModelID]");
+	    return 1;
+	}
+
+	new modelid;
+	if (!sscanf(params, "d", modelid))
+	{
+	    SendClientMessage(playerid, -1, "Использование: /spawncar [ModelID]");
+	    return 1;
+	}
+
+	if (modelid < 400 || modelid > 611)
+	{
+	    SendClientMessage(playerid, -1, "Ошибка: ID машины должен быть от 400 до 611.");
+	    return 1;
+	}
+
+	new Float:x, Float:y, Float:z, Float:angle;
+	GetPlayerPos(playerid, x, y, z);
+	GetPlayerFacingAngle(playerid, angle);
+
+	x += 3.0 * floatsin(-angle, degrees);
+	y += 3.0 * floatcos(-angle, degrees);
+
+	new vehicleid = CreateVehicle(modelid, x, y, z, angle, -1, -1, 600);
+
+	if (vehicleid != INVALID_VEHICLE_ID)
+	{
+	    // Устанавливаем интерьер и виртуальный мир, чтобы машина была видимой
+	    LinkVehicleToInterior(vehicleid, GetPlayerInterior(playerid));
+	    SetVehicleVirtualWorld(vehicleid, GetPlayerVirtualWorld(playerid));
+
+	    new msg[64];
+	    format(msg, sizeof(msg), "Машина ID %d заспавнена.", modelid);
+	    SendClientMessage(playerid, 0x00FF00FF, msg);
+	}
+	else
+	{
+	    SendClientMessage(playerid, -1, "Ошибка при создании машины.");
+	}
+
+	return 1;
+}
+
+
+dcmd_stadium(playerid, params[])
+{
+	if (strlen(params) == 0){
+	    SendClientMessage(playerid, -1, "Использование: /stadium [1-6]");
+	    return 1;
+	}
+
+	new id;
+	if (!sscanf(params, "d", id)) {
+	    SendClientMessage(playerid, -1, "Использование: /stadium [1-6]");
+	    return 1;
+	}
+
+	new Float:x, Float:y, Float:z, interior;
+
+	switch (id)
+	{
+	    case 1: { interior = 1;  x = -1402.66; y = 106.38;  z = 1032.27; }      // Oval Stadium
+	    case 2: { interior = 16; x = -1401.06; y = 1265.37; z = 1039.86; }      // Vice Stadium
+	    case 3: { interior = 15; x = -1417.89; y = 932.44;  z = 1041.53; }      // Blood Bowl
+	    case 4: { interior = 14; x = -1420.42; y = 1616.92; z = 1052.53; }      // Kickstart
+	    case 5: { interior = 7;  x = -1403.01; y = -250.45; z = 1043.53; }      // 8-Track
+	    case 6: { interior = 4;  x = -1421.56; y = -663.82; z = 1059.55; }      // Dirtbike
+	    default: {
+	        SendClientMessage(playerid, -1, "Ошибка: введите число от 1 до 6.");
+	        return 1;
+	    }
+	}
+
+	SetPlayerPos(playerid, x, y, z);
+	SetPlayerInterior(playerid, interior);
+
+	new msg[128];
+	format(msg, sizeof(msg), "Вы были телепортированы на стадион #%d (интерьер %d)", id, interior);
+	SendClientMessage(playerid, 0x00FF00FF, msg);
+	return 1;
 }
 
 dcmd_track(playerid, params[])  //Admin command to force a change to the specified track Usage: /track TRACKNAME
