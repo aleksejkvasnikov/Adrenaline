@@ -404,6 +404,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 		    gPlayerData[playerid][pMoney] -= cost;
 		    GivePlayerMoney(playerid,-cost);
     	    gPlayerData[playerid][pBoughtCarsHealth][row] = 100;
+    	    SetVehicleHealth(playerCreatedVehicle[playerid], 1000.0);
         }
         TogglePlayerControllable(playerid,1);
         inCarsMenu[playerid] = 0;
