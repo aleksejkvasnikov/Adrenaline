@@ -2793,7 +2793,7 @@ CurrentCar(playerid) {
                 if (maxRank != -1 && maxRank != rank)
                     differentRanks = 1;
                 if (maxRank < rank)
-                    rank = maxRank;
+                    maxRank = rank;
             }
             if (differentRanks == 1 && gPlayerData[playerid][pRank] != maxRank) {
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Выполняется уравнивание. Слишком хорошее транспортное средство, выберите другое.");
