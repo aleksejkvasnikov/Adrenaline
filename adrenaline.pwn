@@ -127,6 +127,7 @@ new gGrid2Index;
 new gGrid2Count;
 new gCarModelID;
 new gRaceType;
+new gPlayerGrid[MAX_PLAYERS];
 new gRaceMaker[256];
 new gFinished;
 new spawned[MAX_PLAYERS];
@@ -2466,6 +2467,7 @@ AddPlayersToRace(num)
         {
             gTotalRacers++;
         }
+        gPlayerGrid[i] = 0;
 
         // Скрыть интерфейс у всех
         TextDrawHideForPlayer(i, Ttime);
@@ -2539,6 +2541,7 @@ AddPlayersToRace(num)
 				    }
 				}
 			}
+            gPlayerGrid[j] = 1;
 			gGrid2Count++;
 			pos++;
 			//TogglePlayerControllable(j,0);
@@ -2612,7 +2615,7 @@ public AddRacers(num)
 				}
 			}
 			processCarProperty(j, vehicles[gGridCount]);
-			gGridCount++;
+            gGridCount++;
 			SetRaceText(j,pos+1);
 			SetTimerEx("PutPlayerInVehicleTimed",TIME_PUT_PLAYER,0,"ddd",j, vehicles[pos],0);
 			printf("Помещаю %d в машину %d через 3 сек..",j,pos);
@@ -2696,7 +2699,10 @@ public GridSetupPlayer(playerid)
 	//SetTimerEx("PutPlayerInVehicleTimed",3000,0,"ddd",playerid, vehicles[gGridCount],0);
 	//SetCameraBehindPlayer(playerid);
 //	if(gRaceStarted==0)TogglePlayerControllable(playerid,false);
-	gGrid2Count++;
+    if (gPlayerGrid[playerid] == 0) {
+        gPlayerGrid[playerid] = 1;
+    	gGrid2Count++;
+	}
 	//SetCheckpoint(playerid,gPlayerProgress[playerid],gMaxCheckpoints);
 	//printf("GridSetupDebug- time:%d gridpos:%d playerid:%d vehicle:%d",GetTickCount(),gGridCount,playerid,vehicles[gGridCount]);
 	return 1;
@@ -2762,7 +2768,8 @@ public GridSetup(playerid)
 	SetCameraBehindPlayer(playerid);
 	if(gRaceStarted==0)TogglePlayerControllable(playerid,false);
     processCarProperty(playerid, vehicles[gGridCount]);
-	gGridCount++;
+    if (gGrided[playerid] == 0)
+    	gGridCount++;
 	SetCheckpoint(playerid,gPlayerProgress[playerid],gMaxCheckpoints);
 	gGrided[playerid] = 1;
 	printf("GridSetupDebug- time:%d gridpos:%d playerid:%d vehicle:%d",GetTickCount(),gGridCount,playerid,vehicles[gGridCount]);
@@ -3005,6 +3012,7 @@ LoadRace(racename[])
 		{
 			HideMenuForPlayer(voteMenu,i);
 		}
+		gPlayerGrid[i] = 0;
 	}
 	gFinishOrder=0;
 	gGridCount=0;
