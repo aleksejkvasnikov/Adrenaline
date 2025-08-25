@@ -127,6 +127,7 @@ new gGrid2Index;
 new gGrid2Count;
 new gCarModelID;
 new gRaceType;
+new gPlayerGrid[MAX_PLAYERS];
 new gRaceMaker[256];
 new gFinished;
 new spawned[MAX_PLAYERS];
@@ -176,14 +177,14 @@ new const RankNames[MAX_RANKS][] = {
 new const shopCarIds[CARS_NUMBER] = {
     551,
     521,
-    500,
+    470,
     581
 };
 
 new const shopCarNames[CARS_NUMBER][256] = {
     "Merit",
     "FCR-900",
-    "Mesa",
+    "Patriot",
     "BF-400"
 };
 
@@ -192,7 +193,7 @@ new const shopCarNames[CARS_NUMBER][256] = {
 new const shopCarCost[CARS_NUMBER] = {
     875,
     1250, // x 10
-    625,
+    1000,
     250
 };
 
@@ -2424,11 +2425,11 @@ CreateCarShop() {
     vehicle3Dtext = Create3DTextLabel( "$1250", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
-    vehicle_id = AddStaticVehicleEx(500, 17.6, 3392.4856, 5.3, 90.0, -1, -1, 0);
+    vehicle_id = AddStaticVehicleEx(470, 17.6, 3392.4856, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
     vehicle3Dtext = Create3DTextLabel( shopCarNames[i++], 0xA3F0F3AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
-    vehicle3Dtext = Create3DTextLabel( "$625", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    vehicle3Dtext = Create3DTextLabel( "$1000", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
     vehicle_id = AddStaticVehicleEx(581, 17.6, 3385.7856, 5.3, 90.0, -1, -1, 0);
@@ -2466,6 +2467,7 @@ AddPlayersToRace(num)
         {
             gTotalRacers++;
         }
+        gPlayerGrid[i] = 0;
 
         // Скрыть интерфейс у всех
         TextDrawHideForPlayer(i, Ttime);
@@ -2539,6 +2541,7 @@ AddPlayersToRace(num)
 				    }
 				}
 			}
+            gPlayerGrid[j] = 1;
 			gGrid2Count++;
 			pos++;
 			//TogglePlayerControllable(j,0);
@@ -2612,7 +2615,7 @@ public AddRacers(num)
 				}
 			}
 			processCarProperty(j, vehicles[gGridCount]);
-			gGridCount++;
+            gGridCount++;
 			SetRaceText(j,pos+1);
 			SetTimerEx("PutPlayerInVehicleTimed",TIME_PUT_PLAYER,0,"ddd",j, vehicles[pos],0);
 			printf("Помещаю %d в машину %d через 3 сек..",j,pos);
@@ -2696,7 +2699,10 @@ public GridSetupPlayer(playerid)
 	//SetTimerEx("PutPlayerInVehicleTimed",3000,0,"ddd",playerid, vehicles[gGridCount],0);
 	//SetCameraBehindPlayer(playerid);
 //	if(gRaceStarted==0)TogglePlayerControllable(playerid,false);
-	gGrid2Count++;
+    if (gPlayerGrid[playerid] == 0) {
+        gPlayerGrid[playerid] = 1;
+    	gGrid2Count++;
+	}
 	//SetCheckpoint(playerid,gPlayerProgress[playerid],gMaxCheckpoints);
 	//printf("GridSetupDebug- time:%d gridpos:%d playerid:%d vehicle:%d",GetTickCount(),gGridCount,playerid,vehicles[gGridCount]);
 	return 1;
@@ -2762,7 +2768,8 @@ public GridSetup(playerid)
 	SetCameraBehindPlayer(playerid);
 	if(gRaceStarted==0)TogglePlayerControllable(playerid,false);
     processCarProperty(playerid, vehicles[gGridCount]);
-	gGridCount++;
+    if (gGrided[playerid] == 0)
+    	gGridCount++;
 	SetCheckpoint(playerid,gPlayerProgress[playerid],gMaxCheckpoints);
 	gGrided[playerid] = 1;
 	printf("GridSetupDebug- time:%d gridpos:%d playerid:%d vehicle:%d",GetTickCount(),gGridCount,playerid,vehicles[gGridCount]);
@@ -2776,7 +2783,7 @@ CurrentCar(playerid) {
         SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Отсутствуют доступные транспортные средства.");
         SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
         SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
-        return 404;
+        return 500;
     } else if (gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 44) {
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] У транспортного средства заканчивается здоровье.");
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
@@ -2799,7 +2806,7 @@ CurrentCar(playerid) {
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Выполняется уравнивание. Слишком хорошее транспортное средство, выберите другое.");
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
-                return 404;
+                return 500;
             }
         }
     }
@@ -3005,6 +3012,7 @@ LoadRace(racename[])
 		{
 			HideMenuForPlayer(voteMenu,i);
 		}
+		gPlayerGrid[i] = 0;
 	}
 	gFinishOrder=0;
 	gGridCount=0;
