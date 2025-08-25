@@ -177,14 +177,14 @@ new const RankNames[MAX_RANKS][] = {
 new const shopCarIds[CARS_NUMBER] = {
     551,
     521,
-    500,
+    470,
     581
 };
 
 new const shopCarNames[CARS_NUMBER][256] = {
     "Merit",
     "FCR-900",
-    "Mesa",
+    "Patriot",
     "BF-400"
 };
 
@@ -193,7 +193,7 @@ new const shopCarNames[CARS_NUMBER][256] = {
 new const shopCarCost[CARS_NUMBER] = {
     875,
     1250, // x 10
-    625,
+    1000,
     250
 };
 
@@ -2425,11 +2425,11 @@ CreateCarShop() {
     vehicle3Dtext = Create3DTextLabel( "$1250", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
-    vehicle_id = AddStaticVehicleEx(500, 17.6, 3392.4856, 5.3, 90.0, -1, -1, 0);
+    vehicle_id = AddStaticVehicleEx(470, 17.6, 3392.4856, 5.3, 90.0, -1, -1, 0);
     SetVehicleParamsEx(vehicle_id, 1, 1, 0, 1, 1, 1, 1);
     vehicle3Dtext = Create3DTextLabel( shopCarNames[i++], 0xA3F0F3AA, 0.0, 0.0, 0.0, 150.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 2.0);
-    vehicle3Dtext = Create3DTextLabel( "$625", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
+    vehicle3Dtext = Create3DTextLabel( "$1000", 0xFFF033AA, 0.0, 0.0, 0.0, 120.0, 0, 1 );
     Attach3DTextLabelToVehicle( vehicle3Dtext, vehicle_id, 0.0, 2.0, 1.8);
     
     vehicle_id = AddStaticVehicleEx(581, 17.6, 3385.7856, 5.3, 90.0, -1, -1, 0);
@@ -2783,7 +2783,7 @@ CurrentCar(playerid) {
         SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Отсутствуют доступные транспортные средства.");
         SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
         SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
-        return 404;
+        return 500;
     } else if (gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 44) {
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] У транспортного средства заканчивается здоровье.");
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
@@ -2806,7 +2806,7 @@ CurrentCar(playerid) {
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Выполняется уравнивание. Слишком хорошее транспортное средство, выберите другое.");
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
-                return 404;
+                return 500;
             }
         }
     }
