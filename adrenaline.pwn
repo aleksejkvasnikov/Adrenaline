@@ -614,7 +614,7 @@ ColorMenu(playerid) {
     ShowMenuForPlayer(carColorMenu[playerid],playerid);
 }
 
-FormatCarPurchase(name[], row, playerid, c) {
+FormatCarPurchase(const name[], row, playerid, c) {
     new fmsg[256];
     format(fmsg,256,"(%d/100)",gPlayerData[playerid][pBoughtCarsHealth][row]);
     new cmsg[256];
@@ -622,7 +622,7 @@ FormatCarPurchase(name[], row, playerid, c) {
     return cmsg;
 }
 
-FormatCarRent(name[], row, playerid, c) {
+FormatCarRent(const name[], row, playerid, c) {
     new cmsg[256];
     format(cmsg,256,"%s%s(%d)", c == row && gPlayerData[playerid][pCurrentRent] == 1 ? "#" : "", name, gPlayerData[playerid][pRentedCarRaces][row]);
     return cmsg;
