@@ -2802,7 +2802,7 @@ CurrentCar(playerid) {
                 if (maxRank < rank)
                     maxRank = rank;
             }
-            if (differentRanks == 1 && gPlayerData[playerid][pRank] != maxRank) {
+            if (differentRanks == 1 && gPlayerData[playerid][pRank] == maxRank) {
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Выполняется уравнивание. Слишком хорошее транспортное средство, выберите другое.");
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
                 SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
