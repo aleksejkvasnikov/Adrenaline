@@ -2789,7 +2789,7 @@ CurrentCar(playerid) {
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
     } else if (gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] < 2)
         SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Заканчиваются арендованные транспортные средства. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage.");
-    else {
+    else if (c == 1) {
         new maxRank = -1;
         new differentRanks = 0;
     
