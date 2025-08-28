@@ -212,17 +212,17 @@ new const RankXP[MAX_RANKS] = {
 };
 
 new const RankColors[MAX_RANKS] = {
-    0xAAAAAAFF, // Rookie - Г‘ГҐГ°Г»Г©
-    0xFFFFFFAA, // Street Rider - ГЃГҐГ«Г»Г©
-    0x55DDFFFF, // Tuner - ГѓГ®Г«ГіГЎГ®Г©
-    0x0070FFFF, // Drift Kid - Г‘ГЁГ­ГЁГ©
-    0xFFFF00FF, // Highway Hunter - Г†ВёГ«ГІГ»Г©
-    0xFFA500FF, // Turbo Outlaw - ГЋГ°Г Г­Г¦ГҐГўГ»Г©
-    0xFF0000FF, // Race King - ГЉГ°Г Г±Г­Г»Г©
-    0xBB00BBFF, // JDM Legend - ГЊГ Г«ГЁГ­Г®ГўГ»Г©
-    0x8A2BE2FF, // Midnight Master - Г”ГЁГ®Г«ГҐГІГ®ГўГ»Г©
-    0x000000FF, // Fast & Furious - Г—ВёГ°Г­Г»Г©
-    0xFFD700FF  // The Boss - Г‡Г®Г«Г®ГІГ®Г©
+    0xAAAAAAFF, // Rookie - Серый
+    0xFFFFFFAA, // Street Rider - Белый
+    0x55DDFFFF, // Tuner - Голубой
+    0x0070FFFF, // Drift Kid - Синий
+    0xFFFF00FF, // Highway Hunter - Жёлтый
+    0xFFA500FF, // Turbo Outlaw - Оранжевый
+    0xFF0000FF, // Race King - Красный
+    0xBB00BBFF, // JDM Legend - Малиновый
+    0x8A2BE2FF, // Midnight Master - Фиолетовый
+    0x000000FF, // Fast & Furious - Чёрный
+    0xFFD700FF  // The Boss - Золотой
 };
 
 #define HIGH_SCORE_SIZE 5                   //Max number of ppl on the highscore list
@@ -271,7 +271,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 	{
 		new vmsg[256],pname[MAX_PLAYER_NAME];
 		GetPlayerName(playerid, pname, MAX_PLAYER_NAME);
-		format(vmsg,256,"* %s ГЇГ°Г®ГЈГ®Г«Г®Г±Г®ГўГ Г« Г§Г  %s",pname,gVoteItems[row]);
+		format(vmsg,256,"* %s проголосовал за %s",pname,gVoteItems[row]);
 		SendClientMessageToAll(COLOR_TEMP,vmsg);
 		gVotes[row]++;
 		TogglePlayerControllable(playerid,1);
@@ -334,7 +334,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
     } else if (Current == buyCarMenu[playerid]) {
         if (inGarageMenu[playerid] == 1) {
             if (gPlayerData[playerid][pBoughtCarsHealth][row] < 25) {
-                SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г¬Г ГёГЁГ­Г  Г­ГҐ ГЄГіГЇГ«ГҐГ­Г  ГЁГ«ГЁ Г±Г«Г®Г¬Г Г­Г ");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] машина не куплена или сломана");
             } else {
                 gPlayerData[playerid][pCurrentCar] = row;
                 gPlayerData[playerid][pCurrentRent] = 0;
@@ -344,12 +344,12 @@ public OnPlayerSelectedMenuRow(playerid, row)
             inCarsMenuFinished[playerid] = 1;
         } else {
             if (gPlayerData[playerid][pMoney] < carCost[shopCarIds[row]]) {
-                SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г­ГҐГ¤Г®Г±ГІГ ГІГ®Г·Г­Г® Г¤ГҐГ­ГҐГЈ");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] недостаточно денег");
                 TogglePlayerControllable(playerid,1);
                 inCarsMenu[playerid] = 0;
                 inCarsMenuFinished[playerid] = 1;
             } else if (gPlayerData[playerid][pBoughtCarsHealth][row] > 0) {
-                SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГіГ¦ГҐ ГЄГіГЇГ«ГҐГ­Г®");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] уже куплено");
                 TogglePlayerControllable(playerid,1);
                 inCarsMenu[playerid] = 0;
                 inCarsMenuFinished[playerid] = 1;
@@ -364,7 +364,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
     } else if (Current == rentCarMenu[playerid]) {
         if (inGarageMenu[playerid] == 1) {
             if (gPlayerData[playerid][pRentedCarRaces][row] == 0) {
-                SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г¬Г ГёГЁГ­Г  Г­ГҐ Г Г°ГҐГ­Г¤Г®ГўГ Г­Г ");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] машина не арендована");
             } else {
                 gPlayerData[playerid][pCurrentCar] = row;
                 gPlayerData[playerid][pCurrentRent] = 1;
@@ -399,7 +399,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
         }
     } else if (Current == repairMenu[playerid]) {
         if (gPlayerData[playerid][pBoughtCarsHealth][row] == 0) {
-            SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г¬Г ГёГЁГ­Г  Г­ГҐ ГЄГіГЇГ«ГҐГ­Г ");
+            SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] машина не куплена");
         } else {
 	        new cost = carCost[shopCarIds[row]] / 10;
 		    gPlayerData[playerid][pMoney] -= cost;
@@ -455,7 +455,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
             case 3: cost = cost * 7 / 10;
         }
         if (gPlayerData[playerid][pMoney] < cost) {        
-    		SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г­ГҐГ¤Г®Г±ГІГ ГІГ®Г·Г­Г® Г¤ГҐГ­ГҐГЈ");
+    		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] недостаточно денег");
 		    TogglePlayerControllable(playerid,1);
 		    inCarsMenu[playerid] = 0;
 		    inCarsMenuFinished[playerid] = 1;
@@ -465,7 +465,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 		return 1;
     } else if (Current == buildMenu[xRaceBuilding[playerid]-1])
 	{
-	    print("Г„ГҐГ«Г ГҐГІ Г·ГІГ®-ГІГ® Гў ГЎГЁГ«Г¤Г¬ГҐГ­Гѕ");
+	    print("Делает что-то в билдменю");
 	    switch (xRaceBuilding[playerid])
 	    {
 
@@ -587,7 +587,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 			print("Got here");
 		}
 		else {
-		    SendClientMessage(playerid, COLOR_TEMP, "Г‡Г Г¤Г Г© Г­Г Г§ГўГ Г­ГЁГҐ ГІГ°Г Г±Г±Г»! Eg /set RaceDemon");
+		    SendClientMessage(playerid, COLOR_TEMP, "Задай название трассы! Eg /set RaceDemon");
 			printf("SER RACE NAME; racebuilding %d; pworld:%d",xRaceBuilding[playerid], playerid+100);
 
 		}
@@ -710,7 +710,7 @@ public OnPlayerText(playerid, text[])
         }
     }
 
-    return 0; // ГЎГ«Г®ГЄГЁГ°ГіГҐГ¬ Г±ГІГ Г­Г¤Г Г°ГІГ­Г»Г© ГўГ»ГўГ®Г¤
+    return 0; // блокируем стандартный вывод
 }
 
 public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
@@ -719,7 +719,7 @@ public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
 	{
 	    if(xPlayerProgress[playerid]==MAX_RACECHECKPOINTS)
 	    {
-	    		SendClientMessage(playerid,COLOR_TEMP,"ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г·ГҐГЄГЇГ®Г©Г­ГІГ®Гў Г¤Г®Г±ГІГЁГЈГ­ГіГІГ®!");
+	    		SendClientMessage(playerid,COLOR_TEMP,"Максимальное количество чекпойнтов достигнуто!");
 	    		return;
 	    }
 		GetPlayerPos(playerid, xRaceCheckpoints[playerid][xPlayerProgress[playerid]][0],xRaceCheckpoints[playerid][xPlayerProgress[playerid]][1],xRaceCheckpoints[playerid][xPlayerProgress[playerid]][2]);
@@ -728,18 +728,18 @@ public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
 	    {
 	        case 0:
 	        {
-				SendClientMessage(playerid,COLOR_TEMP,"[INFO] ГЌГ Г·Г Г«ГјГ­Г Гї ГІГ®Г·ГЄГ  1 Г§Г Г¤Г Г­Г ! Г’ГҐГЇГҐГ°Гј ГЁГ±ГЇГ®Г«ГјГ§ГіГ© FIRE Г·ГІГ®ГЎГ» Г§Г Г¤Г ГІГј Г±ГІГ Г°ГІГ®ГўГіГѕ ГІГ®Г·ГЄГі Г¤Г«Гї ГЁГЈГ°Г®ГЄГ  2 (2nd Grid position)");
+				SendClientMessage(playerid,COLOR_TEMP,"[INFO] Начальная точка 1 задана! Теперь используй FIRE чтобы задать стартовую точку для игрока 2 (2nd Grid position)");
 				new veh = GetPlayerVehicleID(playerid);
 				GetVehicleZAngle(veh, xFacing[playerid]);
 	        }
 	        case 1:
 	        {
-	        	SendClientMessage(playerid,COLOR_TEMP,"[INFO] ГЌГ Г·Г Г«ГјГ­Г Гї ГІГ®Г·ГЄГ  2 Г§Г Г¤Г Г­Г ! Г’ГҐГЇГҐГ°Гј ГЁГ±ГЇГ®Г«ГјГ§ГіГ© FIRE Г·ГІГ®ГЎГ» Г§Г Г¤Г ГІГј ГЈГ®Г­Г®Г·Г­Г»Г© Г·ГҐГЄГЇГ®Г©Г­ГІ. ГЌГ ГЇГЁГёГЁ /saverace ГЄГ®ГЈГ¤Г  Г§Г ГЄГ®Г­Г·ГЁГёГј!");
+	        	SendClientMessage(playerid,COLOR_TEMP,"[INFO] Начальная точка 2 задана! Теперь используй FIRE чтобы задать гоночный чекпойнт. Напиши /saverace когда закончишь!");
 	        }
 	        default:
 	        {
 	            new msg[256];
-	            format(msg,256,"[INFO] Г—ГҐГЄГЇГ®Г©Г­ГІ %d Г§Г Г¤Г Г­! ГЌГ ГЇГЁГёГЁ /saverace ГЄГ®ГЈГ¤Г  Г§Г ГЄГ®Г­Г·ГЁГёГј",xPlayerProgress[playerid]-2);
+	            format(msg,256,"[INFO] Чекпойнт %d задан! Напиши /saverace когда закончишь",xPlayerProgress[playerid]-2);
 				SendClientMessage(playerid,COLOR_TEMP,msg);
 			}
 		}
@@ -775,7 +775,7 @@ public OnPlayerSpawn(playerid)
         new rank = gPlayerData[playerid][pRank];
         new color = RankColors[rank];
 
-        format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s Г§Г ГёВёГ« Г­Г  Г±ГҐГ°ГўГҐГ°", (color >>> 8), RankNames[rank], pname);
+        format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s зашёл на сервер", (color >>> 8), RankNames[rank], pname);
         SendClientMessageToAll(COLOR_TEMP, pmsg);
         pullMoneyTimer[playerid] = SetTimerEx("PullMoney", TIME_PULL_MONEY, 1, "d", playerid);
         postLoginInited[playerid] = 1;
@@ -784,11 +784,11 @@ public OnPlayerSpawn(playerid)
 
     if (!gPlayerData[playerid][pReady])
     {
-        SendClientMessage(playerid, -1, "{00DDDD}[Г€ГЌГ”ГЋ]{FFFFFF} Г‚Г» Г­ГҐ ГЈГ®ГІГ®ГўГ» ГЄ ГЈГ®Г­ГЄГҐ. Г€Г±ГЇГ®Г«ГјГ§ГіГ©ГІГҐ ГЄГ®Г¬Г Г­Г¤Гі {00FF00}/ready{FFFFFF}, Г·ГІГ®ГЎГ» ГЇГ°ГЁГ±Г®ГҐГ¤ГЁГ­ГЁГІГјГ±Гї ГЄ Г±Г«ГҐГ¤ГіГѕГ№ГҐГ© ГЈГ®Г­ГЄГҐ.");
-        return 1; // ГЌГҐ Г§Г ГЇГіГ±ГЄГ ГҐГ¬ ГЈГ®Г­ГЄГі
+        SendClientMessage(playerid, -1, "{00DDDD}[ИНФО]{FFFFFF} Вы не готовы к гонке. Используйте команду {00FF00}/ready{FFFFFF}, чтобы присоединиться к следующей гонке.");
+        return 1; // Не запускаем гонку
     }
 
-    // ГѓГ®Г­ГЄГ  ГіГ¦ГҐ ГЁГ¤ВёГІ В— Г¬Г®Г¦Г­Г® Г¤Г®ГЎГ°Г®Г±ГЁГІГј Г­Г  ГІГ°Г Г±Г±Гі
+    // Гонка уже идёт — можно добросить на трассу
     if (gTrackTime > 10)
     {
         GridSetupPlayer(playerid);
@@ -876,7 +876,7 @@ public OnPlayerEnterRaceCheckpoint(playerid)
 		new rank = GetPlayerRankByXP(gPlayerData[playerid][pXP]);
 		gPlayerData[playerid][pRank] = rank;
 
-		printf("[XP] %s ГЇГ®Г«ГіГ·ГЁГ« %d XP (ГўГ±ГҐГЈГ®: %d) В— Г°Г Г­ГЈ: %s", pname, xpReward, gPlayerData[playerid][pXP], RankNames[rank]);
+		printf("[XP] %s получил %d XP (всего: %d) — ранг: %s", pname, xpReward, gPlayerData[playerid][pXP], RankNames[rank]);
 		///
         SavePlayerData(playerid);
         UpdatePlayerRankHUD(playerid);
@@ -1005,20 +1005,20 @@ dcmd_spawncar(playerid, params[])
 {
 	if (strlen(params) == 0)
 	{
-	    SendClientMessage(playerid, -1, "Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ: /spawncar [ModelID]");
+	    SendClientMessage(playerid, -1, "Использование: /spawncar [ModelID]");
 	    return 1;
 	}
 
 	new modelid;
 	if (!sscanf(params, "d", modelid))
 	{
-	    SendClientMessage(playerid, -1, "Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ: /spawncar [ModelID]");
+	    SendClientMessage(playerid, -1, "Использование: /spawncar [ModelID]");
 	    return 1;
 	}
 
 	if (modelid < 400 || modelid > 611)
 	{
-	    SendClientMessage(playerid, -1, "ГЋГёГЁГЎГЄГ : ID Г¬Г ГёГЁГ­Г» Г¤Г®Г«Г¦ГҐГ­ ГЎГ»ГІГј Г®ГІ 400 Г¤Г® 611.");
+	    SendClientMessage(playerid, -1, "Ошибка: ID машины должен быть от 400 до 611.");
 	    return 1;
 	}
 
@@ -1033,17 +1033,17 @@ dcmd_spawncar(playerid, params[])
 
 	if (vehicleid != INVALID_VEHICLE_ID)
 	{
-	    // Г“Г±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ ГЁГ­ГІГҐГ°ГјГҐГ° ГЁ ГўГЁГ°ГІГіГ Г«ГјГ­Г»Г© Г¬ГЁГ°, Г·ГІГ®ГЎГ» Г¬Г ГёГЁГ­Г  ГЎГ»Г«Г  ГўГЁГ¤ГЁГ¬Г®Г©
+	    // Устанавливаем интерьер и виртуальный мир, чтобы машина была видимой
 	    LinkVehicleToInterior(vehicleid, GetPlayerInterior(playerid));
 	    SetVehicleVirtualWorld(vehicleid, GetPlayerVirtualWorld(playerid));
 
 	    new msg[64];
-	    format(msg, sizeof(msg), "ГЊГ ГёГЁГ­Г  ID %d Г§Г Г±ГЇГ ГўГ­ГҐГ­Г .", modelid);
+	    format(msg, sizeof(msg), "Машина ID %d заспавнена.", modelid);
 	    SendClientMessage(playerid, 0x00FF00FF, msg);
 	}
 	else
 	{
-	    SendClientMessage(playerid, -1, "ГЋГёГЁГЎГЄГ  ГЇГ°ГЁ Г±Г®Г§Г¤Г Г­ГЁГЁ Г¬Г ГёГЁГ­Г».");
+	    SendClientMessage(playerid, -1, "Ошибка при создании машины.");
 	}
 
 	return 1;
@@ -1053,13 +1053,13 @@ dcmd_spawncar(playerid, params[])
 dcmd_stadium(playerid, params[])
 {
 	if (strlen(params) == 0){
-	    SendClientMessage(playerid, -1, "Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ: /stadium [1-6]");
+	    SendClientMessage(playerid, -1, "Использование: /stadium [1-6]");
 	    return 1;
 	}
 
 	new id;
 	if (!sscanf(params, "d", id)) {
-	    SendClientMessage(playerid, -1, "Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ: /stadium [1-6]");
+	    SendClientMessage(playerid, -1, "Использование: /stadium [1-6]");
 	    return 1;
 	}
 
@@ -1074,7 +1074,7 @@ dcmd_stadium(playerid, params[])
 	    case 5: { interior = 7;  x = -1403.01; y = -250.45; z = 1043.53; }      // 8-Track
 	    case 6: { interior = 4;  x = -1421.56; y = -663.82; z = 1059.55; }      // Dirtbike
 	    default: {
-	        SendClientMessage(playerid, -1, "ГЋГёГЁГЎГЄГ : ГўГўГҐГ¤ГЁГІГҐ Г·ГЁГ±Г«Г® Г®ГІ 1 Г¤Г® 6.");
+	        SendClientMessage(playerid, -1, "Ошибка: введите число от 1 до 6.");
 	        return 1;
 	    }
 	}
@@ -1083,7 +1083,7 @@ dcmd_stadium(playerid, params[])
 	SetPlayerInterior(playerid, interior);
 
 	new msg[128];
-	format(msg, sizeof(msg), "Г‚Г» ГЎГ»Г«ГЁ ГІГҐГ«ГҐГЇГ®Г°ГІГЁГ°Г®ГўГ Г­Г» Г­Г  Г±ГІГ Г¤ГЁГ®Г­ #%d (ГЁГ­ГІГҐГ°ГјГҐГ° %d)", id, interior);
+	format(msg, sizeof(msg), "Вы были телепортированы на стадион #%d (интерьер %d)", id, interior);
 	SendClientMessage(playerid, 0x00FF00FF, msg);
 	return 1;
 }
@@ -1092,25 +1092,25 @@ dcmd_track(playerid, params[])  //Admin command to force a change to the specifi
 {
     if(!IsPlayerAdmin(playerid))
 	{
-		SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г€Г§ГўГЁГ­ГЁГІГҐ, ГІГ®Г«ГјГЄГ® Г Г¤Г¬ГЁГ­ Г¬Г®Г¦ГҐГІ Г¬ГҐГ­ГїГІГј ГІГ°Г Г±Г±Гі");
+		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Извините, только админ может менять трассу");
 		return 1;
 	}
     if  (gTrackTime<=10)
     {
-		SendClientMessage(playerid,COLOR_TEMP,"Г‘Г«ГЁГёГЄГ®Г¬ ГЇГ®Г§Г¤Г­Г®, ГіГ¦ГҐ ГЁГ¤ГҐГІ Г§Г Г¬ГҐГ­Г  ГІГ°Г Г±Г±Г»");
+		SendClientMessage(playerid,COLOR_TEMP,"Слишком поздно, уже идет замена трассы");
 		return 1;
 	}
 	new trackname[256];
-	if (!sscanf(params, "s", trackname)) SendClientMessage(playerid, COLOR_TEMP, "Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ: /track [trackname]");
+	if (!sscanf(params, "s", trackname)) SendClientMessage(playerid, COLOR_TEMP, "Использование: /track [trackname]");
     new tmp[256],msg[256];
     format(tmp,256,"%s.race",trackname);
 	if(!fexist(tmp))
 	{
-	    SendClientMessage(playerid, COLOR_TEMP,"404: Г’Г°Г Г±Г±Г  Г­ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ");
+	    SendClientMessage(playerid, COLOR_TEMP,"404: Трасса не существует");
 	    return 1;
 	}
-	format(msg,256,"ГЂГ¤Г¬ГЁГ­ ГЁГ§Г¬ГҐГ­ГЁГ« ГІГ°Г Г±Г±Гі Г­Г : %s",trackname);
-	printf("ГЊГҐГ­ГїГҐГ¬ ГІГ°Г Г±Г±Гі Г­Г  %s",trackname);
+	format(msg,256,"Админ изменил трассу на: %s",trackname);
+	printf("Меняем трассу на %s",trackname);
 	SendClientMessageToAll(COLOR_TEMP,msg);
 	gTrackTime=7;
 	gNextTrack = trackname;
@@ -1153,7 +1153,7 @@ dcmd_ready(playerid, params[])
 
     if (gPlayerData[playerid][pReady])
     {
-		SendClientMessage(playerid, -1, "{00DDDD}[Г‘Г’ГЂГ’Г“Г‘]{FFFFFF} Г‚Г» Г®ГІГ¬ГҐГ·ГҐГ­Г» ГЄГ ГЄ {00FF00}ГѓГЋГ’ГЋГ‚Г›Г‰{FFFFFF} Г¤Г«Гї Г±Г«ГҐГ¤ГіГѕГ№ГҐГ© ГЈГ®Г­ГЄГЁ.");
+		SendClientMessage(playerid, -1, "{00DDDD}[СТАТУС]{FFFFFF} Вы отмечены как {00FF00}ГОТОВЫЙ{FFFFFF} для следующей гонки.");
         format(status, sizeof(status), "~g~READY");
 
 		Tposition[playerid] = TextDrawCreate(560.0, 330.0, " ");
@@ -1161,7 +1161,7 @@ dcmd_ready(playerid, params[])
 		Tappend[playerid] = TextDrawCreate(590.0, 335.0, " ");
 		TextDrawLetterSize(Tappend[playerid], 0.5, 2.5);
 			
-        // Г…Г±Г«ГЁ ГЅГІГ® ГЇГҐГ°ГўГ»Г© ГЈГ®ГІГ®ГўГ»Г© ГЁГЈГ°Г®ГЄ, Г§Г ГЇГіГ±ГІГЁГІГј ГЈГ®Г­ГЄГі
+        // Если это первый готовый игрок, запустить гонку
         new readyCount = 0;
         for (new i = 0; i < MAX_PLAYERS; i++)
         {
@@ -1169,7 +1169,7 @@ dcmd_ready(playerid, params[])
                 readyCount++;
         }
 
-        if (gTrackTime > 10) // Г­ГЁГЄГІГ® ГЎГ®Г«ГјГёГҐ Г­ГҐ ГЈГ®ГІГ®Гў ГЁ ГЈГ®Г­ГЄГ  ГҐГ№Вё Г­ГҐ ГЁГ¤ВёГІ
+        if (gTrackTime > 10) // никто больше не готов и гонка ещё не идёт
         {
 			gTotalRacers++;
 			new tmp[5];
@@ -1194,7 +1194,7 @@ dcmd_ready(playerid, params[])
     }
     else
     {
-		SendClientMessage(playerid, -1, "{00DDDD}[Г‘Г’ГЂГ’Г“Г‘]{FFFFFF} Г‚Г» Г®ГІГ¬ГҐГ·ГҐГ­Г» ГЄГ ГЄ {FF0000}ГЌГ… ГѓГЋГ’ГЋГ‚Г›Г‰{FFFFFF}.");
+		SendClientMessage(playerid, -1, "{00DDDD}[СТАТУС]{FFFFFF} Вы отмечены как {FF0000}НЕ ГОТОВЫЙ{FFFFFF}.");
         format(status, sizeof(status), "~r~NOT READY");
     }
 
@@ -1215,16 +1215,16 @@ dcmd_addtorotation(playerid, params[]) //Admin command to add a user-made track 
 {
 	if(!IsPlayerAdmin(playerid))
 	{
-		SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г’Г®Г«ГјГЄГ® Г Г¤Г¬ГЁГ­ Г¬Г®Г¦ГҐГІ ГўГ­Г®Г±ГЁГІГј ГІГ°Г Г±Г±Г» Гў ГІГ°ГҐГЄГ«ГЁГ±ГІ");
+		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Только админ может вносить трассы в треклист");
 		return 1;
 	}
 	new trackname[128];
-	if (!sscanf(params, "s", trackname)) SendClientMessage(playerid, COLOR_TEMP, "[ГЋГГ€ГЃГЉГЂ] Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ: /track [trackname]");
+	if (!sscanf(params, "s", trackname)) SendClientMessage(playerid, COLOR_TEMP, "[ОШИБКА] Использование: /track [trackname]");
     new tmp[256];
     format(tmp,256,"%s.race",trackname);
 	if(!fexist(tmp))
 	{
-	    SendClientMessage(playerid, COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] 404: Г’Г°Г Г±Г±ГҐ Г­ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ");
+	    SendClientMessage(playerid, COLOR_TEMP,"[ОШИБКА] 404: Трассе не существует");
 	    return 1;
 	}
 	
@@ -1236,7 +1236,7 @@ dcmd_addtorotation(playerid, params[]) //Admin command to add a user-made track 
 		format(tmp,256,"\n%s",trackname);
 		fwrite(f,tmp);
 		fclose(f);
-		format(msg,256,"[Г“Г‘ГЏГ…ГГЌГЋ] Г„Г®ГЎГ ГўГЁГ« %s Гў Г°Г®ГІГ Г¶ГЁГѕ",trackname);
+		format(msg,256,"[УСПЕШНО] Добавил %s в ротацию",trackname);
 		SendClientMessage(playerid,COLOR_TEMP,msg);
 	}
 	
@@ -1260,7 +1260,7 @@ dcmd_moretime(playerid, const params[])//Admin command to add 35 seconds onto th
 {
 	if(!IsPlayerAdmin(playerid))
 	{
-		SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г€Г§ГўГЁГ­ГЁГІГҐ, ГІГ®Г«ГјГЄГ® Г Г¤Г¬ГЁГ­ Г¬Г®Г¦ГҐГІ Г¤Г®ГЎГ ГўГ«ГїГІГј ГўГ°ГҐГ¬Гї Гў ГІГ°Г Г±Г±Гі");
+		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Извините, только админ может добавлять время в трассу");
 		return 1;
 	}
     #pragma unused params
@@ -1285,7 +1285,7 @@ dcmd_rescueme(playerid, const params[]) //Returns you to the start of the race
 {
     #pragma unused params
 	new State = GetPlayerState(playerid);
-	SendClientMessage(playerid, COLOR_TEMP, "ГЋГІГЇГ°Г ГўГ«ГїГѕ ГІГҐГЎГї Г­Г  Г±ГІГ Г°ГІ.");
+	SendClientMessage(playerid, COLOR_TEMP, "Отправляю тебя на старт.");
 	if (State!=1)
 	{
 		RemovePlayerFromVehicle(playerid);
@@ -1308,27 +1308,27 @@ dcmd_pause(playerid, const params[])  //Admin command to pause the countdown to 
 {
 	if(!IsPlayerAdmin(playerid))
 	{
-		SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г’Г®Г«ГјГЄГ® Г Г¤Г¬ГЁГ­ Г¬Г®Г¦ГҐГІ Г®Г±ГІГ Г­Г ГўГ«ГЁГўГ ГІГј ГЁ ГЇГ°Г®Г¤Г®Г«Г¦Г ГІГј ГІГ°Г Г±Г±Гі");
+		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Только админ может останавливать и продолжать трассу");
 		return 1;
 	}
     #pragma unused params
 	KillTimer(gEndRacetimer);
-	SendClientMessageToAll(COLOR_TEMP,"[Г€ГЌГ”ГЋ] ГЂГ¤Г¬ГЁГ­ ГЇГ®Г±ГІГ ГўГЁГ« ГІГ°Г Г±Г±Гі Г­Г  ГЇГ ГіГ§Гі!");
-	SendClientMessage(playerid,COLOR_TEMP,"[Г€ГЌГ”ГЋ] Г’Г°ГҐГЄ Г®Г±ГІГ Г­Г®ГўГ«ГҐГ­, Г·ГІГ®ГЎГ» ГЇГ°Г®Г¤Г®Г«Г¦ГЁГІГј /unpause");
+	SendClientMessageToAll(COLOR_TEMP,"[ИНФО] Админ поставил трассу на паузу!");
+	SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Трек остановлен, чтобы продолжить /unpause");
  	return 1;
 }
 dcmd_unpause(playerid, const params[])
 {
 	if(!IsPlayerAdmin(playerid))
 	{
-		SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г’Г®Г«ГјГЄГ® Г Г¤Г¬ГЁГ­ Г¬Г®Г¦ГҐГІ Г®Г±ГІГ Г­Г ГўГ«ГЁГўГ ГІГј ГЁ ГЇГ°Г®Г¤Г®Г«Г¦Г ГІГј ГІГ°Г Г±Г±Гі");
+		SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Только админ может останавливать и продолжать трассу");
 		return 1;
 	}
     #pragma unused params
  	KillTimer(gEndRacetimer);
 	gEndRacetimer = SetTimer("nextRaceCountdown",1000,1);
-	SendClientMessageToAll(COLOR_TEMP,"[Г€ГЌГ”ГЋ] ГЂГ¤Г¬ГЁГ­ Г±Г­ГїГ« ГЇГ ГіГ§Гі Г± ГІГҐГЄГіГ№ГҐГ© ГІГ°Г Г±Г±Г»!");
-	SendClientMessage(playerid,COLOR_TEMP,"[Г€ГЌГ”ГЋ] ГЏГ ГіГ§Г  Г±Г­ГїГІГ ");
+	SendClientMessageToAll(COLOR_TEMP,"[ИНФО] Админ снял паузу с текущей трассы!");
+	SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Пауза снята");
  	return 1;
 }
 dcmd_newcar(playerid, const params[]) //Gives the player a replacement car
@@ -1336,14 +1336,14 @@ dcmd_newcar(playerid, const params[]) //Gives the player a replacement car
     #pragma unused params
     if (xRaceBuilding[playerid]==0 && newcar[playerid]==SPARE_CARS)
     {
-        SendClientMessage(playerid, COLOR_TEMP, "[ГЋГГ€ГЃГЉГЂ] Г‚Г» ГіГ¦ГҐ ГЁГ§Г°Г Г±ГµГ®Г¤Г®ГўГ Г«ГЁ Г±ГўГ®ГЁ Г§Г ГЇГ Г±Г­Г»ГҐ Г ГўГІГ®Г¬Г®ГЎГЁГ«ГЁ ГЅГІГ®Г© ГЈГ®Г­ГЄГЁ");
+        SendClientMessage(playerid, COLOR_TEMP, "[ОШИБКА] Вы уже израсходовали свои запасные автомобили этой гонки");
         return 1;
     }
 	newCar(playerid);
 	if (xRaceBuilding[playerid]==0)
 	{
 		new msg[256];
-		format(msg,256,"[Г€ГЌГ”ГЋ] Г‚Г»Г¤Г ГҐГ¬ Г§Г ГЇГ Г±Г­Г®Г© Г ГўГІГ®Г¬Г®ГЎГЁГ«Гј. Г’ГҐГЎГҐ Г¤Г®Г±ГІГіГЇГ­Г® %d Г§Г ГЇГ Г±Г­Г»Гµ Г ГўГІГ®Г¬Г®ГЎГЁГ«ГҐГ© Г§Г  ГЈГ®Г­ГЄГі.",SPARE_CARS);
+		format(msg,256,"[ИНФО] Выдаем запасной автомобиль. Тебе доступно %d запасных автомобилей за гонку.",SPARE_CARS);
 		SendClientMessage(playerid, COLOR_TEMP, msg);
 		newcar[playerid]++;
 	}
@@ -1354,14 +1354,14 @@ dcmd_nc(playerid, const params[]) //Gives the player a replacement car
     #pragma unused params
     if (xRaceBuilding[playerid]==0 && newcar[playerid]==SPARE_CARS)
     {
-        SendClientMessage(playerid, COLOR_TEMP, "[ГЋГГ€ГЃГЉГЂ] Г‚Г» ГіГ¦ГҐ ГЁГ§Г°Г Г±ГµГ®Г¤Г®ГўГ Г«ГЁ Г±ГўГ®ГЁ Г§Г ГЇГ Г±Г­Г»ГҐ Г ГўГІГ®Г¬Г®ГЎГЁГ«ГЁ ГЅГІГ®Г© ГЈГ®Г­ГЄГЁ");
+        SendClientMessage(playerid, COLOR_TEMP, "[ОШИБКА] Вы уже израсходовали свои запасные автомобили этой гонки");
         return 1;
     }
 	newCar(playerid);
 	if (xRaceBuilding[playerid]==0)
 	{
 		new msg[256];
-		format(msg,256,"[Г€ГЌГ”ГЋ] Г‚Г»Г¤Г ГҐГ¬ Г§Г ГЇГ Г±Г­Г®Г© Г ГўГІГ®Г¬Г®ГЎГЁГ«Гј. Г’ГҐГЎГҐ Г¤Г®Г±ГІГіГЇГ­Г® %d Г§Г ГЇГ Г±Г­Г»Гµ Г ГўГІГ®Г¬Г®ГЎГЁГ«ГҐГ© Г§Г  ГЈГ®Г­ГЄГі.",SPARE_CARS);
+		format(msg,256,"[ИНФО] Выдаем запасной автомобиль. Тебе доступно %d запасных автомобилей за гонку.",SPARE_CARS);
 		SendClientMessage(playerid, COLOR_TEMP, msg);
 		newcar[playerid]++;
 	}
@@ -1377,14 +1377,14 @@ dcmd_kill(playerid, const params[]) //Use to kill yourself
 dcmd_help(playerid, const params[])
 {
     #pragma unused params
-    SendClientMessage(playerid,COLOR_TEMP,"Г„Г®Г±ГІГіГЇГ­Г»ГҐ ГЄГ®Г¬Г Г­Г¤Г»: '/newcar' '/nc' '/rescueme' '/ready'");
-	if(IsPlayerAdmin(playerid))SendClientMessage(playerid,COLOR_TEMP,"ГЂГ¤Г¬ГЁГ­ ГЄГ®Г¬Г Г­Г¤Г»: '/pause' '/resume' '/track [racename]' '/addmodetorotation [racename]'");
+    SendClientMessage(playerid,COLOR_TEMP,"Доступные команды: '/newcar' '/nc' '/rescueme' '/ready'");
+	if(IsPlayerAdmin(playerid))SendClientMessage(playerid,COLOR_TEMP,"Админ команды: '/pause' '/resume' '/track [racename]' '/addmodetorotation [racename]'");
  	return 1;
 }
 dcmd_buildhelp(playerid, const params[])
 {
     #pragma unused params
-	SendClientMessage(playerid,COLOR_TEMP,"Г„Г®Г±ГІГіГЇГ­Г»ГҐ ГЄГ®Г¬Г Г­Г¤Г»: '/buildmode on' '/buildmode off' '/set [racename]' '/newcar'");
+	SendClientMessage(playerid,COLOR_TEMP,"Доступные команды: '/buildmode on' '/buildmode off' '/set [racename]' '/newcar'");
  	return 1;
 }
 
@@ -1394,7 +1394,7 @@ dcmd_buildmode(playerid, params[])
 	new var1[256];
     if (!sscanf(params, "s", var1))
 	{
-		SendClientMessage(playerid, COLOR_TEMP, "Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ: /buildmode [on/off]");
+		SendClientMessage(playerid, COLOR_TEMP, "Использование: /buildmode [on/off]");
 		return 1;
 	}
 	if (strcmp(var1, "on", true)==0)
@@ -1411,7 +1411,7 @@ dcmd_buildmode(playerid, params[])
 		xRaceType[playerid]=0;
 		xCarIds[playerid][0]=0;
 
-		SendClientMessage(playerid,COLOR_TEMP,"Г‡Г ГµГ®Г¤ГЁГ¬ Гў Г°ГҐГ¦ГЁГ¬ Г±ГІГ°Г®ГЁГІГҐГ«ГјГ±ГІГўГ !");
+		SendClientMessage(playerid,COLOR_TEMP,"Заходим в режим строительства!");
 		gPlayerProgress[playerid]=0;
 
 		DisablePlayerRaceCheckpoint(playerid);
@@ -1431,7 +1431,7 @@ dcmd_buildmode(playerid, params[])
 	if (strcmp(var1, "off", true)==0)
 	{
 		xRaceBuilding[playerid]=0;
-		SendClientMessage(playerid,COLOR_TEMP,"Г‚Г»ГµГ®Г¤ГЁГ¬ ГЁГ§ Г°ГҐГ¦ГЁГ¬Г  Г±ГІГ°Г®ГЁГІГҐГ«ГјГ±ГІГўГ !");
+		SendClientMessage(playerid,COLOR_TEMP,"Выходим из режима строительства!");
 		TogglePlayerControllable(playerid,1);
 		AllowPlayerTeleport(playerid,false);
 	    RemovePlayerFromVehicle(playerid);
@@ -1454,17 +1454,17 @@ dcmd_set(playerid, params[])
 	if (xRaceBuilding[playerid]>0)
 	{
 
-	        if (!sscanf(params, "s", xRaceName[playerid])) SendClientMessage(playerid, COLOR_TEMP, "[ГЋГГ€ГЃГЉГЂ] Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ: /set [value]");
+	        if (!sscanf(params, "s", xRaceName[playerid])) SendClientMessage(playerid, COLOR_TEMP, "[ОШИБКА] Использование: /set [value]");
 	        //modename
 			new trackname[256];
 			format(trackname,256,"%s.race",xRaceName[playerid]);
 			if (fexist(trackname))
 			{
-				SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГќГІГ®ГІ ГІГ°ГҐГЄ ГіГ¦ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ, ГўГ»ГЎГҐГ°ГЁ Г¤Г°ГіГЈГ®Г©.");
+				SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Этот трек уже существует, выбери другой.");
 				return 1;
 			} else if (CheckSafeInput(xRaceName[playerid])==0)
 			{
-				SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГЋГёГЁГЎГЄГ : Г€Г±ГЇГ®Г«ГјГ§ГіГ© ГІГ®Г«ГјГЄГ® a-z,A-Z,-,_,0-9");
+				SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Ошибка: Используй только a-z,A-Z,-,_,0-9");
 				return 1;
 			}
 			xRaceBuilding[playerid]++;
@@ -1472,7 +1472,7 @@ dcmd_set(playerid, params[])
 			format(msg,256,"Modename set to: %s",xRaceName[playerid]);
 			SendClientMessage(playerid,COLOR_TEMP,msg);
 			TogglePlayerControllable(playerid,1);
-			SendClientMessage(playerid,COLOR_TEMP,"[Г€ГЌГ”ГЋ] Г€Г±ГЇГ®Г«ГјГ§ГіГ© FIRE Г¤Г«Гї Г§Г Г¤Г Г­ГЁГї Г±ГІГ Г°ГІГ®ГўГ® ГЇГ®Г§ГЁГ¶ГЁГЁ Г¤Г«Гї ГЁГЈГ°Г®ГЄГ  1 (1Г Гї ГЇГ®Г§ГЁГ¶ГЁГї Гў Г°ГҐГёГҐГІГЄГҐ)");
+			SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Используй FIRE для задания стартово позиции для игрока 1 (1ая позиция в решетке)");
 	}
  	return 1;
 }
@@ -1486,7 +1486,7 @@ dcmd_saverace(playerid, const params[])
 		SaveRace(playerid);
 		xRaceBuilding[playerid]=0;
 		SetVehicleToRespawn(GetPlayerVehicleID(playerid));
-		SendClientMessage(playerid,COLOR_TEMP,"Г‚Г»ГµГ®Г¤ГЁГ¬ ГЁГ§ Г°ГҐГ¦ГЁГ¬Г  Г±ГІГ°Г®ГЁГІГҐГ«ГјГ±ГІГўГ !");
+		SendClientMessage(playerid,COLOR_TEMP,"Выходим из режима строительства!");
 		new State = GetPlayerState(playerid);
 		if (State>1) RemovePlayerFromVehicle(playerid);
 	    SetPlayerVirtualWorld(playerid,gWorldID);
@@ -1496,11 +1496,11 @@ dcmd_saverace(playerid, const params[])
 		TogglePlayerControllable(playerid,1);
 		new msg[256],pname[MAX_PLAYER_NAME];
 		GetPlayerName(playerid,pname,MAX_PLAYER_NAME);
-		format (msg,256,"%s Г±Г®Г§Г¤Г Г« ГІГ°Г Г±Г±Гі: %s",pname,xRaceName[playerid]);
+		format (msg,256,"%s создал трассу: %s",pname,xRaceName[playerid]);
 		SendClientMessageToAll(COLOR_TEMP,msg);
 		xCarIds[playerid][0]=0;
 	} else {
-	    SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГЌГҐГ¤Г®Г±ГІГ ГІГ®Г·Г­Г® ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ!");
+	    SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Недостаточно информации!");
 	}
  	return 1;
 }
@@ -1782,7 +1782,7 @@ public countVotes()
 	    gNextTrack = gVoteItems[equalvotes[rand]];
 	    gTrackTime = 7;
 	
-	    format(vmsg, sizeof(vmsg), "{00DDDD}[ГѓГЋГЌГЉГЂ]{FFFFFF} ГѓГ®Г«Г®Г±Г®ГўГ Г­ГЁГҐ Г§Г ГўГҐГ°ГёГҐГ­Г®! {FFD700}%s{FFFFFF} ГЇГ®ГЎГҐГ¦Г¤Г ГҐГІ Г± {FF5500}%d{FFFFFF} ГЈГ®Г«Г®Г±Г Г¬ГЁ. ГЏГҐГ°ГҐГµГ®Г¤ Г·ГҐГ°ГҐГ§ 10 Г±ГҐГЄГіГ­Г¤...", gVoteItems[equalvotes[rand]], gVotes[index]);
+	    format(vmsg, sizeof(vmsg), "{00DDDD}[ГОНКА]{FFFFFF} Голосование завершено! {FFD700}%s{FFFFFF} побеждает с {FF5500}%d{FFFFFF} голосами. Переход через 10 секунд...", gVoteItems[equalvotes[rand]], gVotes[index]);
 	    SendClientMessageToAll(-1, vmsg);
 	}
 	else
@@ -1790,7 +1790,7 @@ public countVotes()
 	    new rand = random(4);
 	    gNextTrack = gVoteItems[rand];
 	
-	    format(vmsg, sizeof(vmsg), "{00DDDD}[ГѓГЋГЌГЉГЂ]{FFFFFF} ГѓГ®Г«Г®Г±Г®ГўГ Г­ГЁГҐ Г§Г ГўГҐГ°ГёГҐГ­Г®! ГѓГ®Г«Г®Г±Г®Гў Г­ГҐ ГЎГ»Г«Г®. Г‘Г«ГіГ·Г Г©Г­Г® ГўГ»ГЎГ°Г Г­Г  ГІГ°Г Г±Г±Г : {FFD700}%s{FFFFFF}. ГЏГҐГ°ГҐГµГ®Г¤ Г·ГҐГ°ГҐГ§ 10 Г±ГҐГЄГіГ­Г¤...", gVoteItems[rand]);
+	    format(vmsg, sizeof(vmsg), "{00DDDD}[ГОНКА]{FFFFFF} Голосование завершено! Голосов не было. Случайно выбрана трасса: {FFD700}%s{FFFFFF}. Переход через 10 секунд...", gVoteItems[rand]);
 	    SendClientMessageToAll(-1, vmsg);
 	}
 	
@@ -1808,7 +1808,7 @@ public RemovePlayersFromVehicles()
 		if (xRaceBuilding[i] == 0 && State > 1 && gPlayerData[i][pIngame] == 1)
 		{
 			RemovePlayerFromVehicle(i);
-			// ГѓГ®ГІГ®ГўГ»Г© ГЁГЈГ°Г®ГЄ В— ГЇГ°Г®Г±ГІГ® Г§Г Г¬Г®Г°Г Г¦ГЁГўГ ГҐГ¬ ГҐГЈГ® Г¬Г ГёГЁГ­Гі
+			// Готовый игрок — просто замораживаем его машину
 			new veh = GetPlayerVehicleID(i);
 			for (new j = 0; j < MAX_PLAYERS; j++)
 			{
@@ -1816,7 +1816,7 @@ public RemovePlayersFromVehicles()
 			}
 			if (!gPlayerData[i][pReady])
 			{
-				// ГЌГ… ГѓГЋГ’ГЋГ‚ В— ГЎГҐГ§Г®ГЇГ Г±Г­Г»Г© ГІГҐГ«ГҐГЇГ®Г°ГІ
+				// НЕ ГОТОВ — безопасный телепорт
 				SetPlayerVirtualWorld(i, 0);
 				gPlayerData[i][pIngame] = 0;
 				SetPlayerPos(i, 27.24 + float(random(2)), 3422.45, 6.2);
@@ -1831,7 +1831,7 @@ public RemovePlayersFromVehicles()
 
 public changetrack()
 {
-	printf("ГЊГҐГ­ГїГѕ ГІГ°ГҐГЄ:%s",gNextTrack);
+	printf("Меняю трек:%s",gNextTrack);
 	invalidateResult = 0;
 	if(LoadRace(gNextTrack))
 	{
@@ -2441,8 +2441,8 @@ CreateCarShop() {
     
     carShopPickup = CreatePickup(1274, 23, 1.54296, 3414, 5.29753);
     garagePickup = CreatePickup(19320, 23, 2.54296, 3414, 5.29753);
-    Create3DTextLabel("ГЏГ®ГЄГіГЇГЄГ  ГЁ Г Г°ГҐГ­Г¤Г  Г¬Г ГёГЁГ­", 0x008080FF, 1.54296, 3414, 5.29753, 40.0, 0, false);
-    Create3DTextLabel("ГѓГ Г°Г Г¦", 0x008080FF, 2.54296, 3414, 5.29753, 40.0, 0, false);
+    Create3DTextLabel("Покупка и аренда машин", 0x008080FF, 1.54296, 3414, 5.29753, 40.0, 0, false);
+    Create3DTextLabel("Гараж", 0x008080FF, 2.54296, 3414, 5.29753, 40.0, 0, false);
 
 	carShopMenu = CreateMenu("Cars",1, 50.0, 200.0, 120.0, 250.0);
     AddMenuItem(carShopMenu,0,"Buy");
@@ -2459,7 +2459,7 @@ AddPlayersToRace(num)
 	new Float:distance;
 	gGrid2Count=0;
 	
-    // ГЏГ®Г¤Г±Г·ВёГІ ГЈГ®ГІГ®ГўГ»Гµ ГЁГЈГ°Г®ГЄГ®Гў
+    // Подсчёт готовых игроков
     gTotalRacers = 0;
     for (new i = 0; i < MAX_PLAYERS; i++)
     {
@@ -2469,7 +2469,7 @@ AddPlayersToRace(num)
         }
         gPlayerGrid[i] = 0;
 
-        // Г‘ГЄГ°Г»ГІГј ГЁГ­ГІГҐГ°ГґГҐГ©Г± Гі ГўГ±ГҐГµ
+        // Скрыть интерфейс у всех
         TextDrawHideForPlayer(i, Ttime);
         TextDrawHideForPlayer(i, Tappend[i]);
         TextDrawHideForPlayer(i, Tposition[i]);
@@ -2481,7 +2481,7 @@ AddPlayersToRace(num)
     new tmp[5];
     format(tmp, sizeof(tmp), "/%d", gTotalRacers);
     TextDrawSetString(Ttotalracers, tmp);
-    // ГЏГ®ГЄГ Г§Г ГІГј ГЁГ­ГІГҐГ°ГґГҐГ©Г± ГІГ®Г«ГјГЄГ® Гі ready ГЁГЈГ°Г®ГЄГ®Гў
+    // Показать интерфейс только у ready игроков
     for (new i = 0; i < MAX_PLAYERS; i++)
     {
         if (IsPlayerConnected(i) && gPlayerData[i][pReady])
@@ -2618,7 +2618,7 @@ public AddRacers(num)
             gGridCount++;
 			SetRaceText(j,pos+1);
 			SetTimerEx("PutPlayerInVehicleTimed",TIME_PUT_PLAYER,0,"ddd",j, vehicles[pos],0);
-			printf("ГЏГ®Г¬ГҐГ№Г Гѕ %d Гў Г¬Г ГёГЁГ­Гі %d Г·ГҐГ°ГҐГ§ 3 Г±ГҐГЄ..",j,pos);
+			printf("Помещаю %d в машину %d через 3 сек..",j,pos);
 			SetCheckpoint(j,gPlayerProgress[j],gMaxCheckpoints);
 			gGrided[j]=1;
 			pos++;
@@ -2780,16 +2780,16 @@ CurrentCar(playerid) {
     new c = gPlayerData[playerid][pCurrentCar];
     if (c < 0 || gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 25
               || gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] == 0) {
-        SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГЋГІГ±ГіГІГ±ГІГўГіГѕГІ Г¤Г®Г±ГІГіГЇГ­Г»ГҐ ГІГ°Г Г­Г±ГЇГ®Г°ГІГ­Г»ГҐ Г±Г°ГҐГ¤Г±ГІГўГ .");
-        SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГЉГіГЇГЁГІГҐ ГЁГ«ГЁ Г Г°ГҐГ­Г¤ГіГ©ГІГҐ ГІГ°Г Г­Г±ГЇГ®Г°ГІГ­Г®ГҐ Г±Г°ГҐГ¤Г±ГІГўГ® Гў /shop, Г§Г ГІГҐГ¬ ГўГ»ГЎГҐГ°ГЁГІГҐ ГҐГЈГ® Гў Г¬ГҐГ­Гѕ /garage, Г«ГЁГЎГ® ГўГ»ГЇГ®Г«Г­ГЁГІГҐ Г°ГҐГ¬Г®Г­ГІ Гў Г¬ГҐГ­Гѕ /garage.");
-        SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГЏГҐГ°ГҐГЄГ«ГѕГ·ГҐГ­ГЁГҐ Г­Г  Г±ГІГ Г­Г¤Г Г°ГІГ­ГіГѕ ГЎГҐГ±ГЇГ«Г ГІГ­ГіГѕ Г¬Г ГёГЁГ­Гі...");
+        SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Отсутствуют доступные транспортные средства.");
+        SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
+        SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
         return 500;
     } else if (gPlayerData[playerid][pCurrentRent] == 0 && gPlayerData[playerid][pBoughtCarsHealth][c] < 44) {
-        SendClientMessage(playerid,COLOR_TEMP,"[Г€ГЌГ”ГЋ] Г“ ГІГ°Г Г­Г±ГЇГ®Г°ГІГ­Г®ГЈГ® Г±Г°ГҐГ¤Г±ГІГўГ  Г§Г ГЄГ Г­Г·ГЁГўГ ГҐГІГ±Гї Г§Г¤Г®Г°Г®ГўГјГҐ.");
-        SendClientMessage(playerid,COLOR_TEMP,"[Г€ГЌГ”ГЋ] ГЉГіГЇГЁГІГҐ ГЁГ«ГЁ Г Г°ГҐГ­Г¤ГіГ©ГІГҐ ГІГ°Г Г­Г±ГЇГ®Г°ГІГ­Г®ГҐ Г±Г°ГҐГ¤Г±ГІГўГ® Гў /shop, Г§Г ГІГҐГ¬ ГўГ»ГЎГҐГ°ГЁГІГҐ ГҐГЈГ® Гў Г¬ГҐГ­Гѕ /garage, Г«ГЁГЎГ® ГўГ»ГЇГ®Г«Г­ГЁГІГҐ Г°ГҐГ¬Г®Г­ГІ Гў Г¬ГҐГ­Гѕ /garage.");
+        SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] У транспортного средства заканчивается здоровье.");
+        SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
     } else if (gPlayerData[playerid][pCurrentRent] == 1 && gPlayerData[playerid][pRentedCarRaces][c] < 2)
-        SendClientMessage(playerid,COLOR_TEMP,"[Г€ГЌГ”ГЋ] Г‡Г ГЄГ Г­Г·ГЁГўГ ГѕГІГ±Гї Г Г°ГҐГ­Г¤Г®ГўГ Г­Г­Г»ГҐ ГІГ°Г Г­Г±ГЇГ®Г°ГІГ­Г»ГҐ Г±Г°ГҐГ¤Г±ГІГўГ . ГЉГіГЇГЁГІГҐ ГЁГ«ГЁ Г Г°ГҐГ­Г¤ГіГ©ГІГҐ ГІГ°Г Г­Г±ГЇГ®Г°ГІГ­Г®ГҐ Г±Г°ГҐГ¤Г±ГІГўГ® Гў /shop, Г§Г ГІГҐГ¬ ГўГ»ГЎГҐГ°ГЁГІГҐ ГҐГЈГ® Гў Г¬ГҐГ­Гѕ /garage.");
-    else if (c == 1) {
+        SendClientMessage(playerid,COLOR_TEMP,"[ИНФО] Заканчиваются арендованные транспортные средства. Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage.");
+    else {
         new maxRank = -1;
         new differentRanks = 0;
     
@@ -2803,9 +2803,9 @@ CurrentCar(playerid) {
                     maxRank = rank;
             }
             if (differentRanks == 1 && gPlayerData[playerid][pRank] == maxRank) {
-                SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] Г‚Г»ГЇГ®Г«Г­ГїГҐГІГ±Гї ГіГ°Г ГўГ­ГЁГўГ Г­ГЁГҐ. Г‘Г«ГЁГёГЄГ®Г¬ ГµГ®Г°Г®ГёГҐГҐ ГІГ°Г Г­Г±ГЇГ®Г°ГІГ­Г®ГҐ Г±Г°ГҐГ¤Г±ГІГўГ®, ГўГ»ГЎГҐГ°ГЁГІГҐ Г¤Г°ГіГЈГ®ГҐ.");
-                SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГЉГіГЇГЁГІГҐ ГЁГ«ГЁ Г Г°ГҐГ­Г¤ГіГ©ГІГҐ ГІГ°Г Г­Г±ГЇГ®Г°ГІГ­Г®ГҐ Г±Г°ГҐГ¤Г±ГІГўГ® Гў /shop, Г§Г ГІГҐГ¬ ГўГ»ГЎГҐГ°ГЁГІГҐ ГҐГЈГ® Гў Г¬ГҐГ­Гѕ /garage, Г«ГЁГЎГ® ГўГ»ГЇГ®Г«Г­ГЁГІГҐ Г°ГҐГ¬Г®Г­ГІ Гў Г¬ГҐГ­Гѕ /garage.");
-                SendClientMessage(playerid,COLOR_TEMP,"[ГЋГГ€ГЃГЉГЂ] ГЏГҐГ°ГҐГЄГ«ГѕГ·ГҐГ­ГЁГҐ Г­Г  Г±ГІГ Г­Г¤Г Г°ГІГ­ГіГѕ ГЎГҐГ±ГЇГ«Г ГІГ­ГіГѕ Г¬Г ГёГЁГ­Гі...");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Выполняется уравнивание. Слишком хорошее транспортное средство, выберите другое.");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Купите или арендуйте транспортное средство в /shop, затем выберите его в меню /garage, либо выполните ремонт в меню /garage.");
+                SendClientMessage(playerid,COLOR_TEMP,"[ОШИБКА] Переключение на стандартную бесплатную машину...");
                 return 500;
             }
         }
@@ -2830,12 +2830,12 @@ stock ShowXPText(playerid, amount)
     }
 
     new text[32];
-    format(text, sizeof(text), "~g~+%d XP", amount); // Г‡ГҐГ«ВёГ­Г»Г© Г¶ГўГҐГІ
+    format(text, sizeof(text), "~g~+%d XP", amount); // Зелёный цвет
 
-    TXP[playerid] = TextDrawCreate(320.0, 180.0, text); // ГЇГ® Г¶ГҐГ­ГІГ°Гі
-    TextDrawFont(TXP[playerid], 3);  // ГЄГ°ГіГЇГ­Г»Г© ГёГ°ГЁГґГІ
+    TXP[playerid] = TextDrawCreate(320.0, 180.0, text); // по центру
+    TextDrawFont(TXP[playerid], 3);  // крупный шрифт
     TextDrawLetterSize(TXP[playerid], 1.0, 3.0);
-    TextDrawColor(TXP[playerid], 0x00FF00FF); // ГїГ°ГЄГ®-Г§ГҐГ«ВёГ­Г»Г©
+    TextDrawColor(TXP[playerid], 0x00FF00FF); // ярко-зелёный
     TextDrawSetOutline(TXP[playerid], 2);
     TextDrawSetProportional(TXP[playerid], 1);
 
@@ -2910,21 +2910,21 @@ SaveRace(playerid)
 	
 	fclose(f);
 	new msgx[256];
-	format(msgx,256,"Г“Г±ГЇГҐГёГ­Г®! %s Г±Г®Г§Г¤Г Г­Г . ГЌГ ГЇГЁГёГЁ /track %s Г¤Г«Гї ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГї",xRaceName[playerid], xRaceName[playerid]);
+	format(msgx,256,"Успешно! %s создана. Напиши /track %s для изменения",xRaceName[playerid], xRaceName[playerid]);
 	SendClientMessage(playerid,COLOR_TEMP,msgx);
-	printf("Г‘ГЋГ•ГђГЂГЌГ…ГЌГЋ %s",xRaceName[playerid]);
+	printf("СОХРАНЕНО %s",xRaceName[playerid]);
 	return 1;
 }
 
 
 LoadRace(racename[])
 {
-	printf("Г‡Г ГЈГ°ГіГ§ГЄГ  ГІГ°Г Г±Г±Г»:%s",racename);
+	printf("Загрузка трассы:%s",racename);
 	new trackname[256];
 	format (trackname,256,"%s.race",racename);
 	if(!fexist(trackname))
 	{
-	    printf("404:ГІГ°Г Г±Г±Г  Г­ГҐ Г­Г Г©Г¤ГҐГ­Г : %s",trackname);
+	    printf("404:трасса не найдена: %s",trackname);
 	    LoadRace(gRaceNames[random(gRaces)]);
 	    return 0;
 	}
@@ -3028,15 +3028,15 @@ LoadRace(racename[])
 	new tempTime[144];
 	tempTime = HighScore(0);
 	
-	// ГЏГҐГ°ГўГ®ГҐ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ В— Г§Г ГЈГ®Г«Г®ГўГ®ГЄ ГІГ°Г Г±Г±Г» ГЁ Г ГўГІГ®Г°Г 
+	// Первое сообщение — заголовок трассы и автора
 	format(gBestTime, sizeof(gBestTime),
-		"{FFD700}<>{FFFFFF} Г’Г°Г Г±Г±Г : {FFD700}%s{FFFFFF} | ГЂГўГІГ®Г°: {00FF00}%s{FFFFFF}",
+		"{FFD700}<>{FFFFFF} Трасса: {FFD700}%s{FFFFFF} | Автор: {00FF00}%s{FFFFFF}",
 		gTrackName, gRaceMaker);
 	SendClientMessageToAll(-1, gBestTime);
 	
-	// Г‚ГІГ®Г°Г®ГҐ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ В— Г°ГҐГЄГ®Г°Г¤
+	// Второе сообщение — рекорд
 	SendClientMessageToAll(-1, tempTime);
-	print("ГѓГ®Г­ГЄГ  Г§Г ГЈГ°ГіГ¦ГҐГ­Г ");
+	print("Гонка загружена");
 	return 1;
 }
 
@@ -3089,7 +3089,7 @@ public nextRaceCountdown()
 	    case 20,30:
 	    {
 			new msg[128];
-			format(msg, sizeof(msg), "{00DDDD}[Г€ГЌГ”ГЋ]{FFFFFF} Г„Г® Г±ГІГ Г°ГІГ  Г±Г«ГҐГ¤ГіГѕГ№ГҐГ© ГЈГ®Г­ГЄГЁ Г®Г±ГІГ Г«Г®Г±Гј {FFD700}%d {FFFFFF}Г±ГҐГЄГіГ­Г¤.", gTrackTime);
+			format(msg, sizeof(msg), "{00DDDD}[ИНФО]{FFFFFF} До старта следующей гонки осталось {FFD700}%d {FFFFFF}секунд.", gTrackTime);
 			SendClientMessageToAll(-1, msg);
 	    }
 	    case 10:
@@ -3232,7 +3232,7 @@ public OnPlayerExitedMenu(playerid)
 public OnPlayerConnect(playerid)
 {
     printf("[DEBUG] OnPlayerConnect: playerid=%d", playerid);
-    TogglePlayerSpectating(playerid, true); // ГўГ Г¦Г­Г®
+    TogglePlayerSpectating(playerid, true); // важно
     gPlayerData[playerid][pReady] = false;
 	gPlayerData[playerid][pIngame] = false;
     CreateSIObjects(playerid);
@@ -3241,9 +3241,9 @@ public OnPlayerConnect(playerid)
     format(path, sizeof(path), "Users/%s.ini", name);
 
     if (fexist(path)) {
-        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "ГЂГўГІГ®Г°ГЁГ§Г Г¶ГЁГї", "Г‚ГўГҐГ¤ГЁГІГҐ ГЇГ Г°Г®Г«Гј:", "Г‚Г®Г©ГІГЁ", "Г‚Г»ГµГ®Г¤");
+        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Авторизация", "Введите пароль:", "Войти", "Выход");
     } else {
-        ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "ГђГҐГЈГЁГ±ГІГ°Г Г¶ГЁГї", "ГЏГ Г°Г®Г«Гј:", "ГЋГЄ", "Г‚Г»ГµГ®Г¤");
+        ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Регистрация", "Пароль:", "Ок", "Выход");
     }
     
     postLoginInited[playerid] = 0;
@@ -3279,7 +3279,7 @@ public OnPlayerDisconnect(playerid, reason)
     new rank = gPlayerData[playerid][pRank];
     new color = RankColors[rank];
 
-    format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s ГЇГ®ГЄГЁГ­ГіГ« Г±ГҐГ°ГўГҐГ°", (color >>> 8), RankNames[rank], pname);
+    format(pmsg, sizeof(pmsg), "*** {%06x}[%s]{FFFFFF} %s покинул сервер", (color >>> 8), RankNames[rank], pname);
     SendClientMessageToAll(COLOR_TEMP, pmsg);
 #endif
 
@@ -3310,8 +3310,8 @@ public OnPlayerDeath(playerid, killerid, WEAPON:reason)
 {
 
 	//spawned[playerid]=0;
-	TogglePlayerSpectating(playerid, true); // Г§Г Г¬Г®Г°Г Г¦ГЁГўГ ГҐГ¬ ГЅГЄГ°Г Г­
-    SetTimerEx("RespawnPlayer", 3000, false, "d", playerid); // Г ГўГІГ®Г±ГЇГ ГўГ­ Г·ГҐГ°ГҐГ§ 2 Г±ГҐГЄГіГ­Г¤Г»
+	TogglePlayerSpectating(playerid, true); // замораживаем экран
+    SetTimerEx("RespawnPlayer", 3000, false, "d", playerid); // автоспавн через 2 секунды
 /*	while (gPlayerProgress[playerid]>0)
 	{
 		RaceCheckpoints[gPlayerProgress[playerid]+1][3] = RaceCheckpoints[gPlayerProgress[playerid]+1][3] - 1.0;
@@ -3338,7 +3338,7 @@ public OnPlayerExitVehicle(playerid, vehicleid)
 
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
-    if (!response) return Kick(playerid); // ГЌГ Г¦Г Г« "Г‚Г»ГµГ®Г¤"
+    if (!response) return Kick(playerid); // Нажал "Выход"
 
     new name[MAX_PLAYER_NAME], path[64];
     GetPlayerName(playerid, name, sizeof(name));
@@ -3384,21 +3384,21 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
         if (SimpleHash(inputtext) == strval(val))
         {
             format(debugResult, sizeof(debugResult), "SUCCESS");
-            printf("[DEBUG] ГЂГўГІГ®Г°ГЁГ§Г Г¶ГЁГї ГіГ±ГЇГҐГёГ­Г ");
+            printf("[DEBUG] Авторизация успешна");
             gPlayerData[playerid][pPassword] = SimpleHash(inputtext);
             gPlayerData[playerid][pLoggedIn] = 1;
 
-            LoadPlayerData(playerid); // ГўГЄГ«ГѕГ·Г ГҐГІ SetSpawnInfo ГЁ SpawnPlayer
+            LoadPlayerData(playerid); // включает SetSpawnInfo и SpawnPlayer
 
-            SendClientMessage(playerid, -1, "{00FF00}[Г“Г‘ГЏГ…Г•]{FFFFFF} ГЂГўГІГ®Г°ГЁГ§Г Г¶ГЁГї ГіГ±ГЇГҐГёГ­Г !");
+            SendClientMessage(playerid, -1, "{00FF00}[УСПЕХ]{FFFFFF} Авторизация успешна!");
         }
         else
         {
             format(debugResult, sizeof(debugResult), "FAIL");
-            printf("[DEBUG] ГЌГҐГўГҐГ°Г­Г»Г© ГЇГ Г°Г®Г«Гј");
+            printf("[DEBUG] Неверный пароль");
 
             ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT,
-                             "ГЂГўГІГ®Г°ГЁГ§Г Г¶ГЁГї", "ГЌГҐГўГҐГ°Г­Г»Г© ГЇГ Г°Г®Г«Гј. ГЏГ®ГўГІГ®Г°ГЁГІГҐ ГЇГ®ГЇГ»ГІГЄГі:", "Г‚Г®Г©ГІГЁ", "Г‚Г»ГµГ®Г¤");
+                             "Авторизация", "Неверный пароль. Повторите попытку:", "Войти", "Выход");
         }
 
         printf("[DEBUG] OnDialogResponse: DIALOG_LOGIN | playerid=%d | result=%s", playerid, debugResult);
@@ -3524,26 +3524,26 @@ stock InitPlayerInterface(playerid)
     //    LoadRace(gTrackName);
 
     //SendClientMessage(playerid, COLOR_TEMP, "Welcome to Adrenaline 2.0 by Paige. The #1 SA-MP Racing mode! NEW: Can now make and save races in-game!");
-    //SendClientMessage(playerid, COLOR_TEMP, "ГЉГ®Г¬Г Г­Г¤Г»: '/newcar' '/rescueme' '/ready'");
+    //SendClientMessage(playerid, COLOR_TEMP, "Команды: '/newcar' '/rescueme' '/ready'");
 	new msg1[144], msg2[144], msg3[144];
 	
 	format(msg1, sizeof(msg1), "{FFD700}Welcome to {FF5500}Adrenaline 2.0{FFD700} by {00DDDD}Paige{FFFFFF}.");
 	format(msg2, sizeof(msg2), "The {FF5500}#1 SA-MP Racing{FFFFFF} mode! {00FF00}NEW{FFFFFF}: in-game race creation and saving.");
-	format(msg3, sizeof(msg3), "{00DDDD}ГЉГ®Г¬Г Г­Г¤Г»:{FFFFFF} {00FF00}/newcar{FFFFFF}, {00FF00}/rescueme{FFFFFF}, {00FF00}/ready");
+	format(msg3, sizeof(msg3), "{00DDDD}Команды:{FFFFFF} {00FF00}/newcar{FFFFFF}, {00FF00}/rescueme{FFFFFF}, {00FF00}/ready");
 	
 	SendClientMessage(playerid, -1, msg1);
 	SendClientMessage(playerid, -1, msg2);
 	SendClientMessage(playerid, -1, msg3);
 
-    // Г–ГўГҐГІ Г°Г Г­ГЈГ 
+    // Цвет ранга
     new rank = gPlayerData[playerid][pRank];
     new color = RankColors[rank];
 
-    // ГЏГ®Г­ГЁГ¦ГҐГ­Г­Г®ГҐ ГЇГ®Г«Г®Г¦ГҐГ­ГЁГҐ (Y = 120.0 ГўГ¬ГҐГ±ГІГ® 80.0)
+    // Пониженное положение (Y = 120.0 вместо 80.0)
     TRankHUD[playerid] = TextDrawCreate(500.0, 120.0, "_");
     TextDrawFont(TRankHUD[playerid], 1);
     TextDrawLetterSize(TRankHUD[playerid], 0.25, 1.0);
-    TextDrawColor(TRankHUD[playerid], color); // Г¶ГўГҐГІ ГЇГ® Г°Г Г­ГЈГі
+    TextDrawColor(TRankHUD[playerid], color); // цвет по рангу
     TextDrawSetOutline(TRankHUD[playerid], 1);
     TextDrawSetShadow(TRankHUD[playerid], 0);
     TextDrawAlignment(TRankHUD[playerid], 1);
@@ -3579,7 +3579,7 @@ ReadHighScoreList(track[256], display, playerid, all)
 		new idx;
 		if (display)
 		{
-			format(himsg, sizeof(himsg),"Г‘ГЇГЁГ±Г®ГЄ Г«ГЁГ¤ГҐГ°Г®Гў Г¤Г«Гї %s\n", track);
+			format(himsg, sizeof(himsg),"Список лидеров для %s\n", track);
 			if(playerid==-1 || IsPlayerAdmin(playerid) && all)
 			{
 				SendClientMessageToAll(COLOR_TEMP, himsg);             //Sweet khaki color... :D
@@ -3613,7 +3613,7 @@ ReadHighScoreList(track[256], display, playerid, all)
 				else format(sSeconds, sizeof(sSeconds), "%d", Seconds);
 				if (MSeconds < 100)format(sMSeconds, sizeof(sMSeconds), "0%d", MSeconds);
 				else format(sMSeconds, sizeof(sMSeconds), "%d", MSeconds);
-				if (Minutes != 50)	format(himsg, sizeof(himsg), "{00DDDD}[ГђГ…ГЉГЋГђГ„]{FFFFFF} #%d В— {FFD700}%d:%s.%s{FFFFFF}, ГіГ±ГІГ Г­Г®ГўГ«ГҐГ­ {00FF00}%s{FFFFFF}\n", i+1, Minutes, sSeconds, sMSeconds, HSList[i][rRacer]);
+				if (Minutes != 50)	format(himsg, sizeof(himsg), "{00DDDD}[РЕКОРД]{FFFFFF} #%d — {FFD700}%d:%s.%s{FFFFFF}, установлен {00FF00}%s{FFFFFF}\n", i+1, Minutes, sSeconds, sMSeconds, HSList[i][rRacer]);
 				else format(himsg, sizeof(himsg),"\n");
 				if(playerid==-1 || IsPlayerAdmin(playerid) && all)
 				{
@@ -3625,7 +3625,7 @@ ReadHighScoreList(track[256], display, playerid, all)
 		}
 		fclose(hsfile);
 	} else {                                                            //if client passed as param a race that doesn't exist
-	format(himsg, sizeof(himsg),"Г’Г°ГҐГЄ '%s' Г­ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ.\n", track);
+	format(himsg, sizeof(himsg),"Трек '%s' не существует.\n", track);
 	SendClientMessage(playerid, COLOR_TEMP, himsg);                 //Send errormsg privately even if admin
 
 	}
@@ -3665,8 +3665,8 @@ CheckAgainstHighScore(playerid, time)
 		{               //new record
 	           //personal flag must always be equal or nonexistant (-1) for a valid (personal) record
 			new newrecordmessage[256];
-			if (i+1 == 1) printf("ГЌГЋГ‚Г›Г‰ ГђГ…ГЉГЋГђГ„ - %s", playername2);
-			format(newrecordmessage, sizeof(newrecordmessage), "{00DDDD}[ГђГ…ГЉГЋГђГ„]{FFFFFF} ГЌГ®ГўГ»Г© Г°ГҐГЄГ®Г°Г¤ #{FFD700}%d{FFFFFF} Г­Г  ГІГ°Г Г±Г±ГҐ {FFD700}%s{FFFFFF} ГіГ±ГІГ Г­Г®ГўГ«ГҐГ­ {00FF00}%s{FFFFFF}\n", i+1, gTrackName, playername2);
+			if (i+1 == 1) printf("НОВЫЙ РЕКОРД - %s", playername2);
+			format(newrecordmessage, sizeof(newrecordmessage), "{00DDDD}[РЕКОРД]{FFFFFF} Новый рекорд #{FFD700}%d{FFFFFF} на трассе {FFD700}%s{FFFFFF} установлен {00FF00}%s{FFFFFF}\n", i+1, gTrackName, playername2);
 			SendClientMessageToAll(COLOR_TEMP, newrecordmessage);
 			recordflag = i;
 			//Record number
@@ -3706,7 +3706,7 @@ CheckAgainstHighScore(playerid, time)
 			}
 			fclose(file2);
 		} else {
-			SendClientMessageToAll(COLOR_TEMP, "ГЋГёГЁГЎГЄГ : Г”Г Г©Г«Г  ГІГ°ГҐГЄГ  Г­ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ");
+			SendClientMessageToAll(COLOR_TEMP, "Ошибка: Файла трека не существует");
 		}
 	}
 }
@@ -3799,8 +3799,8 @@ HighScore(Track)
 {
 	#pragma unused Track
 	new recordtimestr[20], recordtime;
-	new racer[64]; // Г­ГҐ Г­ГіГ¦ГҐГ­ ГІГ ГЄГ®Г© ГЎГ®Г«ГјГёГ®Г© ГЎГіГґГҐГ°
-	new HighScoreString[144]; // Г±ГІГ°Г®ГЈГ® ГЇГ® Г«ГЁГ¬ГЁГІГі
+	new racer[64]; // не нужен такой большой буфер
+	new HighScoreString[144]; // строго по лимиту
 
 	new tmp1[128];
 	format(tmp1, sizeof(tmp1), "%s.txt", gTrackName);
@@ -3831,15 +3831,15 @@ HighScore(Track)
 		format(sSeconds, sizeof(sSeconds), Seconds < 10 ? "0%d" : "%d", Seconds);
 		format(sMSeconds, sizeof(sMSeconds), MSeconds < 100 ? "0%d" : "%d", MSeconds);
 
-		// Г–ГўГҐГІГ­Г®Г© ГґГ®Г°Г¬Г ГІ Г± Г¬ГҐГІГЄГ®Г© [ГђГ…ГЉГЋГђГ„]
+		// Цветной формат с меткой [РЕКОРД]
 		format(HighScoreString, sizeof(HighScoreString),
-			"{00DDDD}[ГђГ…ГЉГЋГђГ„]{FFFFFF} %d:%s.%s В— {00FF00}%s{FFFFFF}",
+			"{00DDDD}[РЕКОРД]{FFFFFF} %d:%s.%s — {00FF00}%s{FFFFFF}",
 			Minutes, sSeconds, sMSeconds, racer);
 	}
 	else
 	{
 		format(HighScoreString, sizeof(HighScoreString),
-			"{00DDDD}[ГђГ…ГЉГЋГђГ„]{FFFFFF} ГЌГҐГІ ГІГҐГЄГіГ№ГҐГЈГ® Г°ГҐГЄГ®Г°Г¤Г .");
+			"{00DDDD}[РЕКОРД]{FFFFFF} Нет текущего рекорда.");
 	}
 
 	return HighScoreString;
@@ -3911,7 +3911,7 @@ stock SimpleHash(const str[])
 	new hash = 0;
 	for (new i = 0; str[i] != '\0'; i++)
 	{
-		hash = (hash * 31 + str[i]) % 100000; // ГЇГ°Г®Г±ГІГ Гї ГЄГ®Г¬ГЎГЁГ­Г Г¶ГЁГї, Г·ГІГ®ГЎГ» ГЎГ»Г«ГЁ Г°Г Г§Г­Г»ГҐ Г§Г­Г Г·ГҐГ­ГЁГї
+		hash = (hash * 31 + str[i]) % 100000; // простая комбинация, чтобы были разные значения
 	}
 	return hash;
 }
